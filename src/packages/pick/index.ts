@@ -3,9 +3,14 @@ type GenericObject = { [key: string]: any };
 /**
  * @description To safely access a deeply nested field within an object.
  */
-export default function pick(obj: GenericObject, keyPath: string, defaultValue?: any, p?: any) {
-  p = 0;
+export default function pick(
+  obj: GenericObject,
+  keyPath: string[] | string,
+  defaultValue?: any
+): any {
+  let nestingLevel = 0;
+  // @ts-ignore allow for an array `keyPath` or strings
   keyPath = keyPath.split ? keyPath.split('.') : keyPath;
-  while (obj && p < keyPath.length) obj = obj[keyPath[p++]];
-  return obj === undefined || p < keyPath.length ? defaultValue : obj;
+  while (obj && nestingLevel < keyPath.length) obj = obj[keyPath[nestingLevel++]];
+  return obj === undefined || nestingLevel < keyPath.length ? defaultValue : obj;
 }
