@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "allowJs": true,
+    "esModuleInterop": true,
+    "checkJs": true,
+    "declaration": false,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["dom", "es6", "es7", "es2017", "esnext"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "outDir": "dist/",
+    "removeComments": true,
+    "sourceMap": true,
+    "target": "es6",
+    "typeRoots": ["./node_modules/@types"],
+    /* Debugging Options */
+    "listEmittedFiles": false /* Print names of generated files part of the compilation. */,
+    "listFiles": false /* Print names of files part of the compilation. */,
+    "pretty": true /* Stylize errors and messages using color and context. */,
+    "traceResolution": false /* Report module resolution log messages. */
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
+}

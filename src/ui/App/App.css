@@ -1,0 +1,19 @@
+.siteNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2eeff;
+}
+
+.navLinks {
+  font-weight: 500;
+  transition: all 0.35s ease-in-out;
+  padding: 0.5rem;
+  margin: 0 0.5rem;
+  text-decoration: none;
+}
+
+.navLinks:hover {
+  text-decoration: underline;
+  background-color: aliceblue;
+}
