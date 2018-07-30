@@ -1,9 +1,7 @@
-type GenericObject = { [key: string]: any };
-
 /**
  * @description To safely access a deeply nested field within an object.
  */
-export default function pick(
+export default function diiv(
   obj: GenericObject,
   keyPath: string[] | string,
   defaultValue?: any

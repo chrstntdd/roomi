@@ -1,4 +1,4 @@
-import pick from './';
+import diiv from './';
 
 const testObj = {
   undef: undefined,
@@ -18,13 +18,13 @@ const testObj = {
 };
 
 function checkEquality(path, value, _default?: any) {
-  const result = pick(testObj, path, _default);
+  const result = diiv(testObj, path, _default);
   expect(result).toStrictEqual(value);
 
   /* Check for array syntax support */
   if (path) {
     const arr = path.split('.');
-    expect(pick(testObj, arr, _default)).toStrictEqual(value);
+    expect(diiv(testObj, arr, _default)).toStrictEqual(value);
   }
 }
 
@@ -58,8 +58,8 @@ test('can handle errors states with a default value', () => {
 });
 
 test('accessing and undefined key or value without a default will result in undefined being returned', () => {
-  expect(pick(testObj, 'a.unknownKey')).toBeUndefined();
-  expect(pick(testObj, 'a.undef')).toBeUndefined();
+  expect(diiv(testObj, 'a.unknownKey')).toBeUndefined();
+  expect(diiv(testObj, 'a.undef')).toBeUndefined();
 
-  expect(pick(testObj, 'a.unknownKey', 'Safe default')).toEqual('Safe default');
+  expect(diiv(testObj, 'a.unknownKey', 'Safe default')).toEqual('Safe default');
 });
