@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "autoprefixer": "^9.0.1",
+    "folktale": "^2.1.0",
     "fuse-box": "^3.4.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "tslib": "^1.9.3",
     "typescript": "^2.9.2"
   },
   "devDependencies": {
