@@ -1,7 +1,5 @@
+import fetch from 'isomorphic-unfetch';
 import { task } from 'folktale/concurrency/task';
-
-import { IResponse } from './fetch';
-import fetch from './';
 
 function checkForLocalJWT() {
   try {
@@ -13,7 +11,7 @@ function checkForLocalJWT() {
   }
 }
 
-function checkStatus(response: IResponse): Promise<IResponse> {
+function checkStatus(response) {
   if (response.ok) return Promise.resolve(response);
   else {
     const error = new Error(response.statusText);
