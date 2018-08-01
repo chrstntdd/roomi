@@ -1,11 +1,13 @@
 import React from 'react';
 import { waitAll } from 'folktale/concurrency/task';
 
-import { get } from '@/packages/fetch/cmd';
+import { get } from '@/packages/cmd';
 
 import Input from '@/ui/components/Input';
 
 const objNotEmpty = obj => Object.keys(obj).length > 1;
+
+import s from './Home.css';
 
 class Home extends React.Component {
   state = {
@@ -38,16 +40,35 @@ class Home extends React.Component {
     return (
       <div className="home">
         Home
-        <form onSubmit={this.fetchGithubDetails}>
-          <Input label="Github username" ref={this.inputRef} onChange={this.updateUsername} />
-          <button type="submit">Search</button>
+        <form className={s.form} onSubmit={this.fetchGithubDetails}>
+          <div className="flex-down">
+            <legend className={s.legend}>Search for a developer</legend>
+            <div className="input-wrapper">
+              <Input
+                className={s.inputField}
+                id="gh-username"
+                label="Github username"
+                ref={this.inputRef}
+                onChange={this.updateUsername}
+              />
+            </div>
+            <button className={s.searchButton} type="submit">
+              Search
+            </button>
+          </div>
         </form>
         {!this.state.profileDetails
           ? null
-          : this.state.profileDetails.map((x, i) => {
-              console.log(x);
-              return <div key={i}>something</div>;
-            })}
+          : this.state.profileDetails.map((langData, i) => (
+              <div key={i} className={s.languageContainer}>
+                {Object.entries(langData).map((lang, i) => (
+                  <div key={i}>
+                    <p>{`${lang[0]} ${lang[1]}`}</p>
+                  </div>
+                ))}
+                <p>Total bytes: {Object.values(langData).reduce((acc, curr) => acc + curr, 0)}</p>
+              </div>
+            ))}
       </div>
     );
   }
