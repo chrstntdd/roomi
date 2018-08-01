@@ -49,7 +49,7 @@ context(
               bakeApiIntoBundle: 'app',
               uglify: true,
               treeshake: true,
-              css: { clean: true }
+              css: { clean: true, path: `css/main.css` }
             })
         ]
       });
