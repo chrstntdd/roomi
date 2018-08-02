@@ -10,6 +10,7 @@ import s from './App.css';
 const Home = generateLazyComponent(() => import('@/ui/pages/Home'));
 const Dashboard = generateLazyComponent(() => import('@/ui/pages/Dashboard'));
 const NotFound = generateLazyComponent(() => import('@/ui/pages/NotFound'));
+const Auth = generateLazyComponent(() => import('@/ui/pages/Auth'));
 
 /**
  * @description CURRENT CODE SPLITTING IMPLEMENTATION SPLITS
@@ -30,10 +31,18 @@ class App extends Component {
           <Link className={s.navLinks} to="/unknown">
             Unknown
           </Link>
+          <Link className={s.navLinks} to="/sign-in">
+            Sign In
+          </Link>
+          <Link className={s.navLinks} to="/sign-up">
+            Sign Up
+          </Link>
         </nav>
         <Router>
           <Home path="/" />
           <Dashboard path="/dashboard" />
+          <Auth path="/sign-in" />
+          <Auth path="/sign-up" />
           <NotFound default />
         </Router>
       </Page>
