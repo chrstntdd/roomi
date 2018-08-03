@@ -5,7 +5,7 @@ import Page from '@/ui/components/Page';
 
 import generateLazyComponent from '@/ui/components/LazyComponent';
 
-import s from './App.css';
+import './App.css';
 
 const Home = generateLazyComponent(() => import('@/ui/pages/Home'));
 const Dashboard = generateLazyComponent(() => import('@/ui/pages/Dashboard'));
@@ -21,22 +21,12 @@ class App extends Component {
   render() {
     return (
       <Page>
-        <nav className={s.siteNav}>
-          <Link className={s.navLinks} to="/">
-            Home
-          </Link>
-          <Link className={s.navLinks} to="/dashboard">
-            Dashboard
-          </Link>
-          <Link className={s.navLinks} to="/unknown">
-            Unknown
-          </Link>
-          <Link className={s.navLinks} to="/sign-in">
-            Sign In
-          </Link>
-          <Link className={s.navLinks} to="/sign-up">
-            Sign Up
-          </Link>
+        <nav>
+          <Link to="/">Home</Link>
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/unknown">Unknown</Link>
+          <Link to="/sign-in">Sign In</Link>
+          <Link to="/sign-up">Sign Up</Link>
         </nav>
         <Router>
           <Home path="/" />

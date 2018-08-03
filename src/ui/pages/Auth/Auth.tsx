@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 import Form from '@/packages/unrender/Form';
 import Input from '@/ui/components/Input';
 
-enum AuthForm {
-  SignIn,
-  SignUp
+interface PAuth {
+  path: string;
 }
+interface SAuth {}
 
-export class Auth extends Component {
+export class Auth extends Component<PAuth, SAuth> {
   state = {};
 
   handleSubmit = formValues => {
