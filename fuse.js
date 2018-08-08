@@ -6,7 +6,7 @@ const {
   QuantumPlugin,
   WebIndexPlugin
 } = require('fuse-box');
-const { src, task, context } = require('fuse-box/sparky');
+const { src, task, context, tsc } = require('fuse-box/sparky');
 const { join } = require('path');
 const express = require('express');
 const autoprefixer = require('autoprefixer');
@@ -15,7 +15,8 @@ const { info } = console;
 
 const POSTCSS_PLUGINS = [autoprefixer({ browsers: ['>0.25%'] })];
 
-const CLIENT_OUT = join(__dirname, 'build');
+const CLIENT_OUT = join(__dirname, 'build/client');
+const SERVER_OUT = join(__dirname, 'build/server');
 const TEMPLATE = join(__dirname, 'src/index.html');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -54,6 +55,16 @@ context(
         ]
       });
     }
+
+    async compileServer() {
+      await tsc('src/server', {
+        target: 'esnext',
+        outDir: SERVER_OUT,
+        listEmittedFiles: true,
+        sourceMap: true,
+        watch: !IS_PRODUCTION
+      });
+    }
   }
 );
 
@@ -88,9 +99,19 @@ task('prod-build', async context => {
   await fuse.run();
 });
 
-task('clean', () => src('./build/*').clean('./build/'));
+task('server-build', async context => await context.compileServer());
+
+task('client-clean', () => src(`${CLIENT_OUT}/*`).clean(`${CLIENT_OUT}`));
+task('server-clean', () => src(`${SERVER_OUT}/*`).clean(`${SERVER_OUT}`));
+
+task('copy-schema', () =>
+  src('./**/*.graphql', { base: './src/server/graphql' }).dest(join(SERVER_OUT, 'graphql'))
+);
 
 /* MAIN BUILD TASK CHAINS  */
-task('dev', ['clean', 'dev-build'], () => info('GET TO WORK'));
+task('dev', ['client-clean', 'dev-build'], () => info('GET TO WORK'));
+task('prod', ['client-clean', 'prod-build'], () => info('READY FOR PROD'));
 
-task('prod', ['clean', 'prod-build'], () => info('READY FOR PROD'));
+task('server-dev', ['server-clean', 'copy-schema', 'server-build'], _ =>
+  info('The back end code has been compiled. GET TO WORK!')
+);
