@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { noop } from '@/util';
-import State from '@/packages/unrender/State';
-import { set, composeOnChange } from '@/packages/unrender/helpers';
+import State from '$/unrender/State';
+import { set, composeOnChange } from '$/unrender/helpers';
 
 interface PToggle {
   initial?: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import State from '@/packages/unrender/State';
-import { set } from '@/packages/unrender/helpers';
+import State from 'packages/unrender/State';
+import { set } from 'packages/unrender/helpers';
 import { noop } from '@/util';
 
 function Form({ initial = {}, onChange = noop, ...props }) {

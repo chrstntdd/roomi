@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Router, Link } from '@/packages/Router';
+import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
 
 import generateLazyComponent from '@/ui/components/LazyComponent';

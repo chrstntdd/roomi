@@ -17,7 +17,7 @@ const POSTCSS_PLUGINS = [autoprefixer({ browsers: ['>0.25%'] })];
 
 const CLIENT_OUT = join(__dirname, 'build/client');
 const SERVER_OUT = join(__dirname, 'build/server');
-const TEMPLATE = join(__dirname, 'src/index.html');
+const TEMPLATE = join(__dirname, 'src/client/index.html');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 context(
@@ -30,7 +30,7 @@ context(
         sourceMaps: true,
         cache: !IS_PRODUCTION,
         allowSyntheticDefaultImports: true,
-        alias: { '@': '~', $: '~/packages' },
+        alias: { '@': '~/client', $: '~/packages' },
         plugins: [
           [
             CSSModules({
@@ -83,7 +83,7 @@ task('dev-build', async context => {
     .bundle('app')
     .hmr({ reload: true })
     .watch()
-    .instructions('> index.tsx');
+    .instructions('> client/index.tsx');
 
   await fuse.run();
 });
@@ -94,7 +94,7 @@ task('prod-build', async context => {
   fuse
     .bundle('app')
     .splitConfig({ dest: '/bundles' })
-    .instructions('!> index.tsx');
+    .instructions('!> client/index.tsx');
 
   await fuse.run();
 });

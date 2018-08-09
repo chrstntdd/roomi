@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Form from '@/packages/unrender/Form';
+import Form from 'packages/unrender/Form';
 import Input from '@/ui/components/Input';
 
 interface PAuth {
