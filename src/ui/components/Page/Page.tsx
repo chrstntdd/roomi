@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import s from './Page.css';
+import './Page.scss';
 
 /**
  * @description Wrapper that renders a page. The top-level <Page />
@@ -8,7 +8,7 @@ import s from './Page.css';
  */
 export class Page extends Component {
   render() {
-    return <div className={s.pageContainer}>{this.props.children}</div>;
+    return <div>{this.props.children}</div>;
   }
 }
 

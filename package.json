@@ -9,17 +9,21 @@
     "test-auto": "./node_modules/.bin/jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
     "start": "cross-env NODE_ENV=development node fuse.js dev",
-    "build": "cross-env NODE_ENV=production node fuse.js prod"
+    "build": "cross-env NODE_ENV=production node fuse.js prod",
+    "test-prod": " rm -rf .fusebox/ && cross-env NODE_ENV=production node fuse.js test-prod"
   },
   "dependencies": {
     "autoprefixer": "^9.0.1",
     "folktale": "^2.1.0",
     "fuse-box": "^3.4.0",
+    "html-minifier": "^3.5.19",
     "isomorphic-unfetch": "^2.1.1",
+    "node-sass": "^4.9.3",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "tslib": "^1.9.3",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.1",
+    "workbox-build": "^3.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.55",

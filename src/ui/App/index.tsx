@@ -5,7 +5,7 @@ import Page from '@/ui/components/Page';
 
 import generateLazyComponent from '@/ui/components/LazyComponent';
 
-import './App.css';
+import './App.scss';
 
 const Home = generateLazyComponent(() => import('@/ui/pages/Home'));
 const Dashboard = generateLazyComponent(() => import('@/ui/pages/Dashboard'));
