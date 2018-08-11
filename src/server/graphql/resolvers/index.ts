@@ -3,7 +3,7 @@ import { GraphQLError } from 'graphql/error';
 import { Kind } from 'graphql/language';
 
 import PostResolvers from './blogpost';
-// import UserResolvers from './users';
+import UserResolvers from './users';
 
 const validateValue = value => {
   if (isNaN(Date.parse(value))) {
@@ -21,7 +21,9 @@ export default {
     /* post mutations */
     createPost: PostResolvers.createPost,
     updatePost: PostResolvers.updatePost,
-    deletePost: PostResolvers.deletePost
+    deletePost: PostResolvers.deletePost,
+    signIn: UserResolvers.signIn,
+    signUp: UserResolvers.signUp
   },
 
   /*

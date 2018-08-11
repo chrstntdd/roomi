@@ -9,7 +9,6 @@ import { importSchema } from 'graphql-import';
 import { makeExecutableSchema } from 'graphql-tools';
 import { join } from 'path';
 
-import { DATABASE_URL, ENV, PORT } from './config';
 import resolvers from './graphql/resolvers';
 
 require('dotenv').config();
@@ -19,11 +18,18 @@ const app = express();
 /* Set mongoose promise to native ES6 promise */
 (<any>mongoose).Promise = Promise;
 
-const connectOptions = {
-  useMongoClient: true,
-  keepAlive: true,
-  reconnectTries: Number.MAX_VALUE
-};
+const ENV = process.env.NODE_ENV || 'development';
+let DATABASE_URL;
+let PORT;
+
+/* set environment variables */
+if (ENV === 'production') {
+  DATABASE_URL = process.env.MONGODB_URI;
+  PORT = parseInt(process.env.PORT, 10);
+} else {
+  DATABASE_URL = process.env.TEST_DATABASE_URL;
+  PORT = 3000;
+}
 
 app.use(compression());
 app.use(helmet());
@@ -50,10 +56,10 @@ let server;
 
 const runServer = async (dbURL: string = DATABASE_URL, port: number = PORT) => {
   try {
-    // await mongoose.connect(
-    //   dbURL,
-    //   connectOptions
-    // );
+    await mongoose.connect(
+      dbURL,
+      { useNewUrlParser: true }
+    );
     await new Promise((resolve, reject) => {
       server = app
         .listen(port, () => {

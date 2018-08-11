@@ -1,7 +1,7 @@
 import { default as User, userSchema } from '../../models/user';
 
 export default {
-  signup: async (_, { email, username, password, firstName, lastName }) => {
+  signUp: async (_, { email, username, password, firstName, lastName }) => {
     const newUser = await new User({
       email,
       username,
@@ -10,10 +10,10 @@ export default {
       lastName
     }).save();
 
-    return newUser.createToken(newUser._id);
+    return { token: newUser.createToken(newUser._id) };
   },
 
-  signin: async (_, { email, password }) => {
+  signIn: async (_, { email, password }) => {
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error('There is no user with that email');

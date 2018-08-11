@@ -35,7 +35,7 @@ type Query {
 }
 
 type Mutation {
-  signup(
+  signUp(
     email: String!
     username: String!
     password: String!
@@ -43,7 +43,7 @@ type Mutation {
     lastName: String!
   ): Auth!
 
-  signin(email: String!, password: String!): Auth!
+  signIn(email: String!, password: String!): Auth!
 
   updateUser(
     userId: ID!
