@@ -71,7 +71,7 @@
     "testURL": "http://localhost:3000",
     "transform": {
       "^.+\\.(scss|css)$": "<rootDir>/config/testing/style-mock.js",
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+      "^.+\\.tsx?$": "ts-jest",
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
     },
     "transformIgnorePatterns": [
