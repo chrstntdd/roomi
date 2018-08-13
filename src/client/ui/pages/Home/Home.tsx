@@ -4,7 +4,7 @@ import { waitAll } from 'folktale/concurrency/task';
 import { get } from 'packages/cmd';
 import Input from '@/ui/components/Input';
 
-import './Home.css';
+import './Home.scss';
 
 const objNotEmpty = obj => Object.keys(obj).length > 1;
 
