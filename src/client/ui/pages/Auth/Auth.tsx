@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'unistore/react';
 
 import { actions } from '@/state/store';
-import Form from '@/packages/unrender/Form';
+import Form from 'packages/unrender/Form';
 import Input from '@/ui/components/Input';
 
 interface PAuth {

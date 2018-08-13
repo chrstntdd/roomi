@@ -1,7 +1,7 @@
 import React from 'react';
 import { waitAll } from 'folktale/concurrency/task';
 
-import { get } from '@/packages/cmd';
+import { get } from 'packages/cmd';
 import Input from '@/ui/components/Input';
 
 import './Home.scss';

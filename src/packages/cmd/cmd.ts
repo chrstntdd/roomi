@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-unfetch';
+import 'isomorphic-unfetch';
 import { task } from 'folktale/concurrency/task';
 
 function checkForLocalJWT() {

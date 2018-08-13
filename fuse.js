@@ -6,26 +6,23 @@ const {
   QuantumPlugin,
   WebIndexPlugin
 } = require('fuse-box');
-const { src, task, context, exec } = require('fuse-box/sparky');
+const { src, task, context, tsc, exec } = require('fuse-box/sparky');
 const { join } = require('path');
 const express = require('express');
 const autoprefixer = require('autoprefixer');
 const workbox = require('workbox-build');
-const { promisify } = require('util');
-const { unlink, writeFile, readFile, stat, writeFileSync, readFileSync } = require('fs');
+const { unlinkSync, writeFileSync, readFileSync } = require('fs');
 const minify = require('html-minifier').minify;
 
 const { info } = console;
-const asyncReadFile = promisify(readFile);
-const asyncWriteFile = promisify(writeFile);
-const asyncUnlink = promisify(unlink);
-const asyncStats = promisify(stat);
 
 const POSTCSS_PLUGINS = [autoprefixer({ browsers: ['>0.25%'] })];
-
-const CLIENT_OUT = join(__dirname, 'build');
-const TEMPLATE = join(__dirname, 'src/index.html');
+const CLIENT_OUT = join(__dirname, 'build/client');
+const SERVER_OUT = join(__dirname, 'build/server');
+const TEMPLATE = join(__dirname, 'src/client/index.html');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+const { sw } = require(join(__dirname, 'src/client/inline-sw'));
 
 context(
   class {
@@ -37,7 +34,7 @@ context(
         sourceMaps: true,
         cache: !IS_PRODUCTION,
         allowSyntheticDefaultImports: true,
-        alias: { '@': '~', $: '~/packages' },
+        alias: { '@': '~/client', $: '~/packages' },
         plugins: [
           [
             SassPlugin({ importer: true, output: 'compressed' }),
@@ -57,7 +54,11 @@ context(
             title: 'Roomi',
             path: '/',
             async: true,
-            pre: 'load'
+            pre: 'load',
+            engine: 'handlebars',
+            locals: {
+              service_worker: IS_PRODUCTION ? sw : ' '
+            }
           }),
           IS_PRODUCTION &&
             QuantumPlugin({
@@ -67,6 +68,15 @@ context(
               css: { clean: true, path: 'css/main.css' }
             })
         ]
+      });
+    }
+
+    async compileServer() {
+      await tsc('src/server', {
+        target: 'esnext',
+        outDir: SERVER_OUT,
+        sourceMap: true,
+        ...(IS_PRODUCTION ? {} : { watch: true })
       });
     }
 
@@ -91,7 +101,7 @@ task('dev-build', async context => {
     .bundle('app')
     .hmr({ reload: true })
     .watch()
-    .instructions('> index.tsx');
+    .instructions('> client/index.tsx');
 
   await fuse.run();
 });
@@ -102,17 +112,24 @@ task('prod-build', async context => {
   fuse
     .bundle('app')
     .splitConfig({ dest: '/bundles' })
-    .instructions('!> index.tsx');
+    .instructions('!> client/index.tsx');
 
   context.testProd && context.startDevServer(fuse);
 
   await fuse.run();
 });
 
-task('clean', () => src('./build/*').clean('./build/'));
+task('server-build', async context => await context.compileServer());
 
-task('minify-html', async () => {
-  const fileContents = await asyncReadFile(`${CLIENT_OUT}/index.html`, 'UTF-8');
+task('client-clean', () => src(`${CLIENT_OUT}/*`).clean(`${CLIENT_OUT}`));
+task('server-clean', () => src(`${SERVER_OUT}/*`).clean(`${SERVER_OUT}`));
+
+task('copy-schema', () =>
+  src('./**/*.graphql', { base: './src/server/graphql' }).dest(join(SERVER_OUT, 'graphql'))
+);
+
+task('minify-html', () => {
+  const fileContents = readFileSync(`${CLIENT_OUT}/index.html`, 'UTF-8');
 
   const minified = minify(fileContents, {
     removeComments: true,
@@ -127,8 +144,8 @@ task('minify-html', async () => {
     minifyURLs: true
   });
 
-  await asyncUnlink(`${CLIENT_OUT}/index.html`);
-  await asyncWriteFile(`${CLIENT_OUT}/index.html`, minified, 'UTF-8');
+  unlinkSync(`${CLIENT_OUT}/index.html`);
+  writeFileSync(`${CLIENT_OUT}/index.html`, minified, 'UTF-8');
 });
 
 task('gen-sw', async () => {
@@ -137,7 +154,7 @@ task('gen-sw', async () => {
       globDirectory: CLIENT_OUT,
       globPatterns: ['**/*.{html,js,css,png,svg,jpg,jpeg,gif}'],
       globIgnores: ['**/sw.js'],
-      swSrc: join('src', 'sw.js'),
+      swSrc: join('src/client', 'sw.js'),
       swDest: join(CLIENT_OUT, 'sw.js')
     });
 
@@ -152,9 +169,12 @@ task('gen-sw', async () => {
 });
 
 /* MAIN BUILD TASK CHAINS  */
-task('dev', ['clean', 'dev-build'], () => info('GET TO WORK'));
-
+task('dev', ['client-clean', 'dev-build'], () => info('GET TO WORK'));
 task('prod', ['clean', 'prod-build', 'minify-html', 'gen-sw'], () => info('READY FOR PROD'));
+
+task('server-dev', ['server-clean', 'copy-schema', 'server-build'], _ =>
+  info('The back end code has been compiled. GET TO WORK!')
+);
 
 task('test-prod', async context => {
   context.testProd = true;
