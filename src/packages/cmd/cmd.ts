@@ -1,16 +1,6 @@
 import 'isomorphic-unfetch';
 import { task } from 'folktale/concurrency/task';
 
-function checkForLocalJWT() {
-  try {
-    const jwt = sessionStorage.getItem('jwt');
-    if (jwt) return jwt;
-    else throw new Error('JWT not found');
-  } catch (error) {
-    return null;
-  }
-}
-
 function checkStatus(response) {
   if (response.ok) return Promise.resolve(response);
   else {
@@ -21,17 +11,16 @@ function checkStatus(response) {
 }
 
 function getRequestBody(method, body?: any, withAuth?: boolean) {
-  let jwt;
-  jwt = withAuth ? { Authorization: checkForLocalJWT() } : {};
-  body = body ? JSON.stringify(body) : {};
+  const token = withAuth && sessionStorage.getItem('jwt');
+
   return {
     method,
     credentials: 'include',
     headers: {
-      ...jwt,
+      ...(token && withAuth ? { Authorization: `Bearer ${token}` } : {}),
       'Content-Type': 'application/json'
     },
-    body
+    ...(body ? { body: JSON.stringify(body) } : {})
   };
 }
 
