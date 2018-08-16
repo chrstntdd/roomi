@@ -39,8 +39,6 @@ type Mutation {
     email: String!
     username: String!
     password: String!
-    firstName: String!
-    lastName: String!
   ): Auth!
 
   signIn(email: String!, password: String!): Auth!

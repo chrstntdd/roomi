@@ -42,12 +42,10 @@ export const userSchema = new Schema({
     unique: true
   },
   firstName: {
-    type: String,
-    required: true
+    type: String
   },
   lastName: {
-    type: String,
-    required: true
+    type: String
   },
   accountCreated: {
     type: Date,

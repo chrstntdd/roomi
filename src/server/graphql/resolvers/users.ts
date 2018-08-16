@@ -1,13 +1,11 @@
 import { default as User, userSchema } from '../../models/user';
 
 export default {
-  signUp: async (_, { email, username, password, firstName, lastName }) => {
+  signUp: async (_, { email, username, password }) => {
     const newUser = await new User({
       email,
       username,
-      password,
-      firstName,
-      lastName
+      password
     }).save();
 
     return { token: newUser.createToken(newUser._id) };
