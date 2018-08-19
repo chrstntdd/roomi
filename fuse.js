@@ -92,7 +92,7 @@ context(
   }
 );
 
-task('dev-build', async context => {
+task('client-dev-build', async context => {
   const fuse = context.build();
 
   context.startDevServer(fuse);
@@ -106,7 +106,7 @@ task('dev-build', async context => {
   await fuse.run();
 });
 
-task('prod-build', async context => {
+task('client-prod-build', async context => {
   const fuse = context.build();
 
   fuse
@@ -169,15 +169,31 @@ task('gen-sw', async () => {
 });
 
 /* MAIN BUILD TASK CHAINS  */
-task('dev', ['client-clean', 'dev-build'], () => info('GET TO WORK'));
-task('prod', ['clean', 'prod-build', 'minify-html', 'gen-sw'], () => info('READY FOR PROD'));
 
-task('server-dev', ['server-clean', 'copy-schema', 'server-build'], _ =>
-  info('The back end code has been compiled. GET TO WORK!')
+// Compile client code for development
+task('client-dev', ['client-clean', 'client-dev-build'], _ =>
+  info('Client code compiled. Get to building  🚧  🛠  💰  🏗  ')
 );
 
+// Compile client code for production
+task('client-prod', ['client-clean', 'client-prod-build', 'minify-html', 'gen-sw'], _ =>
+  info('🚀  Client code ready for production, lets secure this bag 🚀')
+);
+
+// Compile server
+task('server-dev', ['server-clean', 'copy-schema', 'server-build'], _ =>
+  info('Back end code compiled successfully!')
+);
+
+// Compile server for production
+// (Identical to the dev build, but this task has its NODE_ENV set to prod)
+task('server-prod', ['server-clean', 'copy-schema', 'server-build'], _ =>
+  info('Back end code compiled successfully!')
+);
+
+// Test production client build with the express dev server provided by fusebox
 task('test-prod', async context => {
   context.testProd = true;
-  await exec('clean', 'prod-build', 'minify-html', 'gen-sw');
+  await exec('client-clean', 'client-prod');
   info('Lets test prod');
 });

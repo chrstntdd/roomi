@@ -9,10 +9,12 @@
     "test-auto": "./node_modules/.bin/jest --watch",
     "test-fast": "./node_modules/.bin/jest --silent",
     "test:debug": "node --cross-envinspect-brk ./node_modules/.bin/jest --runInBand --watch",
-    "start:server": "cross-env NODE_ENV=development node fuse.js server-dev",
-    "start": "cross-env NODE_ENV=development node fuse.js dev",
-    "build": "cross-env NODE_ENV=production node fuse.js prod",
-    "test-prod": " rm -rf .fusebox/ && cross-env NODE_ENV=production node fuse.js test-prod"
+    "s:dev": "cross-env NODE_ENV=development node fuse.js server-dev",
+    "s:prod": "cross-env NODE_ENV=production node fuse.js server-dev",
+    "c:dev": "cross-env NODE_ENV=development node fuse.js client-dev",
+    "c:prod": "cross-env NODE_ENV=production node fuse.js client-prod",
+    "c:test-prod": " rm -rf .fusebox/ && cross-env NODE_ENV=production node fuse.js test-prod",
+    "full:dev" : "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"NODE_ENV=development node fuse.js client-dev\" \"NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js\""
   },
   "dependencies": {
     "autoprefixer": "^9.0.1",
@@ -56,6 +58,7 @@
     "@types/sanitizer": "^0.0.28",
     "babel-jest": "^23.4.2",
     "babel-plugin-dynamic-import-node": "^2.0.0",
+    "concurrently": "^3.6.1",
     "cross-env": "^5.2.0",
     "jest": "^23.4.2",
     "jest-dom": "^1.11.0",
