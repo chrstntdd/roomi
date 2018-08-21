@@ -21,6 +21,7 @@ const CLIENT_OUT = join(__dirname, 'build/client');
 const SERVER_OUT = join(__dirname, 'build/server');
 const TEMPLATE = join(__dirname, 'src/client/index.html');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const USE_SERVICE_WORKER = process.env.USE_SW === true;
 
 const { sw } = require(join(__dirname, 'src/client/inline-sw'));
 
@@ -57,7 +58,7 @@ context(
             pre: 'load',
             engine: 'handlebars',
             locals: {
-              service_worker: IS_PRODUCTION ? sw : ' '
+              service_worker: IS_PRODUCTION && USE_SERVICE_WORKER ? sw : ' '
             }
           }),
           IS_PRODUCTION &&
@@ -149,22 +150,24 @@ task('minify-html', () => {
 });
 
 task('gen-sw', async () => {
-  try {
-    const stats = await workbox.injectManifest({
-      globDirectory: CLIENT_OUT,
-      globPatterns: ['**/*.{html,js,css,png,svg,jpg,jpeg,gif}'],
-      globIgnores: ['**/sw.js'],
-      swSrc: join('src/client', 'sw.js'),
-      swDest: join(CLIENT_OUT, 'sw.js')
-    });
+  if (USE_SERVICE_WORKER) {
+    try {
+      const stats = await workbox.injectManifest({
+        globDirectory: CLIENT_OUT,
+        globPatterns: ['**/*.{html,js,css,png,svg,jpg,jpeg,gif}'],
+        globIgnores: ['**/sw.js'],
+        swSrc: join('src/client', 'sw.js'),
+        swDest: join(CLIENT_OUT, 'sw.js')
+      });
 
-    info(
-      ` ⚙️ Service worker generated 🛠 \n ${
-        stats.count
-      } files will be precached, totaling ${stats.size / 1000000.0} MB.`
-    );
-  } catch (error) {
-    info('  😒 There was an error generating the service worker 😒', error);
+      info(
+        ` ⚙️ Service worker generated 🛠 \n ${
+          stats.count
+        } files will be precached, totaling ${stats.size / 1000000.0} MB.`
+      );
+    } catch (error) {
+      info('  😒 There was an error generating the service worker 😒', error);
+    }
   }
 });
 
