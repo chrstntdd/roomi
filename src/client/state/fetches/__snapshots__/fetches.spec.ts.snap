@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`signUp 1`] = `
+Array [
+  "http://localhost:3000/graphql",
+  Object {
+    "query": "
+        mutation signUp {
+          signUp(email: \\"a\\", username: \\"b\\", password: \\"d\\") {
+            token
+          }
+        }
+        ",
+  },
+]
+`;
