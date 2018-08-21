@@ -10,7 +10,8 @@ import './App.scss';
 const Home = generateLazyComponent(() => import('@/ui/pages/Home'));
 const Dashboard = generateLazyComponent(() => import('@/ui/pages/Dashboard'));
 const NotFound = generateLazyComponent(() => import('@/ui/pages/NotFound'));
-const Auth = generateLazyComponent(() => import('@/ui/pages/Auth'));
+const SignIn = generateLazyComponent(() => import('@/ui/pages/Auth/SignIn'));
+const SignUp = generateLazyComponent(() => import('@/ui/pages/Auth/SignUp'));
 
 /**
  * @description CURRENT CODE SPLITTING IMPLEMENTATION SPLITS
@@ -25,14 +26,14 @@ class App extends Component {
           <Link to="/">Home</Link>
           <Link to="/dashboard">Dashboard</Link>
           <Link to="/unknown">Unknown</Link>
-          <Link to="/sign-in">Sign In</Link>
-          <Link to="/sign-up">Sign Up</Link>
+          <Link to="/sign-in">sign-in</Link>
+          <Link to="/sign-up">sign-up</Link>
         </nav>
         <Router>
           <Home path="/" />
           <Dashboard path="/dashboard" />
-          <Auth path="/sign-in" />
-          <Auth path="/sign-up" />
+          <SignIn path="/sign-in" />
+          <SignUp path="/sign-up" />
           <NotFound default />
         </Router>
       </Page>
