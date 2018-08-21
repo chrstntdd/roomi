@@ -22,12 +22,22 @@ class App extends Component {
   render() {
     return (
       <Page>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/unknown">Unknown</Link>
-          <Link to="/sign-in">sign-in</Link>
-          <Link to="/sign-up">sign-up</Link>
+        <nav className="siteNav">
+          <Link className="navLinks" to="/">
+            Home
+          </Link>
+          <Link className="navLinks" to="/dashboard">
+            Dashboard
+          </Link>
+          <Link className="navLinks" to="/unknown">
+            Unknown
+          </Link>
+          <Link className="navLinks" to="/sign-in">
+            sign-in
+          </Link>
+          <Link className="navLinks" to="/sign-up">
+            sign-up
+          </Link>
         </nav>
         <Router>
           <Home path="/" />

@@ -10,7 +10,7 @@ import Input from '@/ui/components/Input';
 
 import { validateSignUpForm } from '@/ui/pages/Auth/helpers';
 
-import './SignUp.scss';
+import '../Auth.scss';
 
 interface PSignUp {}
 interface SSignUp {}
@@ -19,9 +19,8 @@ export class SignUp extends Component<PSignUp, SSignUp> {
   state = {};
 
   handleSubmit = formValues => {
-    console.log(formValues);
     validateSignUpForm(formValues).matchWith({
-      Success: data => console.log(data),
+      Success: validFormData => this.props.signUp(validFormData),
       Failure: err => console.error(err)
     });
   };
