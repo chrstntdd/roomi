@@ -15,7 +15,7 @@
     "c:prod": "cross-env NODE_ENV=production node fuse.js client-prod",
     "c:test-prod": " rm -rf .fusebox/ && cross-env USE_SW=false NODE_ENV=production node fuse.js test-prod",
     "c:test-prod-sw": " rm -rf .fusebox/ && cross-env USE_SW=true NODE_ENV=production node fuse.js test-prod",
-    "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"NODE_ENV=development node fuse.js client-dev\" \"NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js\""
+    "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js\""
   },
   "dependencies": {
     "autoprefixer": "^9.0.1",
