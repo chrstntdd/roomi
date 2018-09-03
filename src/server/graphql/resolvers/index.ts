@@ -15,7 +15,10 @@ export default {
   Query: {
     /* post queries */
     getAllUserPosts: PostResolvers.getAllUserPosts,
-    getUserPost: PostResolvers.getUserPost
+    getUserPost: PostResolvers.getUserPost,
+
+    /* user queries */
+    users: UserResolvers.getAllUsers
   },
   Mutation: {
     /* post mutations */
