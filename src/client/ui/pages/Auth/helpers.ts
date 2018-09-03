@@ -12,10 +12,12 @@ export const validEmail = (value: string) =>
     : Failure(['Please enter a valid email']);
 
 export const notEmpty = (field, value) =>
-  value.trim() ? Success(value) : Failure([`${field} can't be empty`]);
+  value && value.trim()
+    ? Success(value)
+    : Failure([`${capitalizeFirstChar(field)} can't be empty`]);
 
 export const minLength = (field: string, min: number, value: string) =>
-  value.length > min
+  value && value.length > min
     ? Success(value)
     : Failure([`${capitalizeFirstChar(field)} must have at least ${min} characters`]);
 

@@ -5,6 +5,8 @@ $color3: hsla(197%, 53%, 48%, 1);
 $color4: hsla(194%, 53%, 51%, 1);
 $color5: hsla(195%, 47%, 53%, 1);
 
+$errorColor: darken(#ec6d75, 10%);
+
 /* RGB */
 // $color1: rgba(53, 150, 182, 1);
 // $color2: rgba(58, 156, 188, 1);
@@ -87,6 +89,11 @@ $LABEL_COLOR: $color1;
         outline: none;
         border-color: $LABEL-COLOR;
         box-shadow: 0 1px 0 0 $LABEL-COLOR;
+        
+        &.invalid {
+          border-color: $errorColor;
+          box-shadow: 0 1px 0 0 $errorColor;
+        }
       }
 
       &:focus + label {
@@ -108,6 +115,18 @@ $LABEL_COLOR: $color1;
       transition: transform 0.2s ease, color 0.2s ease;
       &:hover {
         cursor: text;
+      }
+    }
+
+    .errors {
+      display: flex;
+      flex-direction: column;
+
+      span {
+        margin: 0;
+        text-align: left;
+        color: darken(#ec6d75, 10%);
+        display: block;
       }
     }
   }
