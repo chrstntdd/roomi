@@ -390,7 +390,7 @@ const ServerLocation = ({ url, children }) => (
  * Redirect START ///////////////////////////////////////////////
  */
 
-function RedirectRequest(uri) {
+function RedirectRequest(uri: string) {
   this.uri = uri;
 }
 
@@ -442,37 +442,56 @@ const Redirect = props => (
  * Link START //////////////////////////////////////////////////////////////////
  */
 
-const Link = forwardRef(({ innerRef, ...props }, ref) => (
-  <BaseContext.Consumer>
-    {({ basepath, baseuri }) => (
-      <Location>
-        {({ location, navigate }) => {
-          const { to, state, replace, getProps = () => {}, ...anchorProps } = props;
-          const href = resolve(to, baseuri);
-          const isCurrent = location.pathname === href;
-          const isPartiallyCurrent = startsWith(location.pathname, href);
+//  & React.HTMLProps<HTMLInputElement>
 
-          return (
-            <a
-              ref={ref || innerRef}
-              aria-current={isCurrent ? 'page' : undefined}
-              {...anchorProps}
-              {...getProps({ isCurrent, isPartiallyCurrent, href, location })}
-              href={href}
-              onClick={event => {
-                if (anchorProps.onClick) anchorProps.onClick(event);
-                if (shouldNavigate(event)) {
-                  event.preventDefault();
-                  navigate(href, { state, replace });
-                }
-              }}
-            />
-          );
-        }}
-      </Location>
-    )}
-  </BaseContext.Consumer>
-));
+interface LinkPropGetter {
+  isCurrent: boolean;
+  isPartiallyCurrent: boolean;
+  href: string;
+  location: any;
+}
+
+interface LinkProps {
+  to: string;
+  innerRef?: any;
+  state?: any;
+  replace?: () => any;
+  getProps?: (x: LinkPropGetter) => any;
+}
+
+const Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> = forwardRef(
+  ({ innerRef, ...props }, ref) => (
+    <BaseContext.Consumer>
+      {({ basepath, baseuri }) => (
+        <Location>
+          {({ location, navigate }) => {
+            const { to, state, replace, getProps = () => {}, ...anchorProps } = props;
+            const href = resolve(to, baseuri);
+            const isCurrent = location.pathname === href;
+            const isPartiallyCurrent = startsWith(location.pathname, href);
+
+            return (
+              <a
+                ref={ref || innerRef}
+                aria-current={isCurrent ? 'page' : undefined}
+                {...anchorProps}
+                {...getProps({ isCurrent, isPartiallyCurrent, href, location })}
+                href={href}
+                onClick={event => {
+                  if (anchorProps.onClick) anchorProps.onClick(event);
+                  if (shouldNavigate(event)) {
+                    event.preventDefault();
+                    navigate(href, { state, replace });
+                  }
+                }}
+              />
+            );
+          }}
+        </Location>
+      )}
+    </BaseContext.Consumer>
+  )
+);
 
 /**
  * Link END //////////////////////////////////////////////////////////////////
