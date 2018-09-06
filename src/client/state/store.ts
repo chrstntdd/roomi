@@ -6,12 +6,13 @@ import fetches from './fetches';
 const initialState = {
   email: '',
   firstName: '',
+  friends: [],
+  graphQlErrorMsg: '',
   isAuthenticated: false,
   jwt: '',
   lastName: '',
-  role: '',
-  friends: [],
-  lists: []
+  lists: [],
+  role: ''
 };
 
 const store =

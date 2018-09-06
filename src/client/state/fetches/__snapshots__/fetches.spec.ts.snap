@@ -2,15 +2,11 @@
 
 exports[`signUp 1`] = `
 Array [
-  "http://localhost:3000/graphql",
-  Object {
-    "query": "
-        mutation signUp {
+  "signUp {
           signUp(email: \\"a\\", username: \\"b\\", password: \\"d\\") {
             token
           }
         }
         ",
-  },
 ]
 `;

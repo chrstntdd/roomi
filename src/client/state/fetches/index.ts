@@ -1,26 +1,25 @@
-import { post } from 'packages/cmd';
-import { GRAPHQL_API_ENDPOINT } from '@/constants';
+import Cmd from '@/cmd';
 
 export default store => ({
   signUp: async (state, { email, username, password }) => {
-    const response = await post(GRAPHQL_API_ENDPOINT, {
-      query: `
-        mutation signUp {
-          signUp(email: "${email}", username: "${username}", password: "${password}") {
+    const mutationName = 'signUp';
+    const response = await Cmd.mutation(`${mutationName} {
+          ${mutationName}(email: "${email}", username: "${username}", password: "${password}") {
             token
           }
         }
-        `
-    });
+        `);
 
     response.run().listen({
-      onResolved: ({ data }) => {
+      onResolved: d => {
         store.setState({
-          jwt: data.signUp.token
+          jwt: d[mutationName].token
         });
       },
-      onRejected: err => {
-        console.dir(err);
+      onRejected: ({ message }) => {
+        store.setState({
+          graphQlErrorMsg: message
+        });
       }
     });
   }
