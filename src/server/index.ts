@@ -69,7 +69,16 @@ app.use(
       graphiql: !IS_PRODUCTION,
       context: {
         token: ''
-      }
+      },
+      formatError: ({ extensions = {}, message, locations, stack = '', path }) => ({
+        message,
+        ...(!IS_PRODUCTION && {
+          locations,
+          stack: stack.split('\n'),
+          path,
+          ...extensions
+        })
+      })
     };
   })
 );
