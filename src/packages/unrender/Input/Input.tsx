@@ -18,7 +18,6 @@ export function Input({ initial = '', onChange, ...props }): React.ReactElement<
             onChange: event => setState({ value: event.target.value }),
             value: state.value
           },
-          set: value => setState(s => ({ value: set(value, s.value) })),
           value: state.value
         })
       }

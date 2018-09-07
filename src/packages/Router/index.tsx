@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import ReactDOM from 'react-dom';
 
 /* CLONE/FORK OF https://github.com/reach/router */
 
@@ -92,9 +91,9 @@ class RouterImpl extends React.PureComponent<PRouterImpl, SRouterImpl> {
         )
       );
 
-      // using 'div' for < 16.3 support
+      /* using 'div' for < 16.3 support */
       const FocusWrapper = primary ? FocusHandler : component;
-      // don't pass any props to 'div'
+      /* don't pass any props to 'div' */
       const wrapperProps = primary ? { uri, location, component, ...domProps } : domProps;
 
       return (
@@ -124,10 +123,6 @@ const FocusHandler = ({ uri, location, component, ...domProps }) => (
   </FocusContext.Consumer>
 );
 
-// don't focus on initial render
-let initialRender = true;
-let focusHandlerCount = 0;
-
 interface PFocusHandlerImpl {
   component: any;
   requestFocus: (any) => void;
@@ -139,6 +134,9 @@ interface PFocusHandlerImpl {
 interface SFocusHandlerImpl {
   shouldFocus?: boolean;
 }
+// don't focus on initial render
+let initialRender = true;
+let focusHandlerCount = 0;
 
 class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerImpl> {
   state = {
@@ -175,15 +173,11 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
 
   componentWillUnmount() {
     focusHandlerCount--;
-    if (focusHandlerCount === 0) {
-      initialRender = true;
-    }
+    focusHandlerCount === 0 && (initialRender = true);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.location !== this.props.location && this.state.shouldFocus) {
-      this.focus();
-    }
+  componentDidUpdate(prevProps) {
+    prevProps.location !== this.props.location && this.state.shouldFocus && this.focus();
   }
 
   focus() {
@@ -196,21 +190,15 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
 
     let { requestFocus } = this.props;
 
-    if (requestFocus) {
-      requestFocus(this.node);
-    } else {
-      if (initialRender) {
-        initialRender = false;
-      } else {
-        this.node.focus();
-      }
-    }
+    requestFocus
+      ? requestFocus(this.node)
+      : initialRender
+        ? (initialRender = false)
+        : this.node.focus();
   }
 
   requestFocus = node => {
-    if (!this.state.shouldFocus) {
-      node.focus();
-    }
+    !this.state.shouldFocus && node.focus();
   };
 
   render() {
@@ -310,11 +298,9 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
   componentDidMount() {
     this.state.refs.unlisten = this.props.history.listen(() => {
       Promise.resolve().then(() => {
-        ReactDOM.unstable_deferredUpdates(() => {
-          if (!this.unmounted) {
-            this.setState(() => ({ context: this.getContext() }));
-          }
-        });
+        if (!this.unmounted) {
+          this.setState(() => ({ context: this.getContext() }));
+        }
       });
     });
   }
@@ -433,16 +419,6 @@ class RedirectImpl extends React.Component<PRedirectImpl, SRedirectImpl> {
 const Redirect = props => (
   <Location>{locationContext => <RedirectImpl {...locationContext} {...props} />}</Location>
 );
-
-/**
- * Redirect END /////////////////////////////////////////////////////////////////
- */
-
-/**
- * Link START //////////////////////////////////////////////////////////////////
- */
-
-//  & React.HTMLProps<HTMLInputElement>
 
 interface LinkPropGetter {
   isCurrent: boolean;
