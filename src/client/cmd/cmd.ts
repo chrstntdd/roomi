@@ -1,45 +1,52 @@
 import fetch from 'unfetch';
-import { task } from 'folktale/concurrency/task';
 
 import { GRAPHQL_API_ENDPOINT } from '@/constants';
 
 export class Cmd {
+  constructor() {
+    this.graphQlEndpoint = GRAPHQL_API_ENDPOINT;
+    this.headers = {
+      'Content-Type': 'application/json'
+    };
+  }
+
+  headers: GenericObject;
+  graphQlEndpoint: string;
+
   private async checkGraphQlResponse(response) {
     const { errors, data } = await response.json();
 
     if (response.ok && data) return Promise.resolve(data);
     else {
-      const error = new Error(errors[0].message);
-      return Promise.reject(error);
+      return Promise.reject(Error(errors[0].message));
     }
   }
 
   private buildGraphQlPayload(gqlString: string, withAuth?: boolean) {
-    const token = withAuth && sessionStorage.getItem('jwt');
+    const token = withAuth && window.sessionStorage && sessionStorage.getItem('jwt');
 
     return {
       method: 'post',
       credentials: 'include',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
-        'Content-Type': 'application/json'
+        ...this.headers
       },
       body: JSON.stringify({ query: `mutation ${gqlString}` })
     };
   }
 
-  public mutation(gqlString: string, withAuth?: boolean) {
-    return task(async resolver => {
-      try {
-        const response = await fetch(
-          GRAPHQL_API_ENDPOINT,
-          this.buildGraphQlPayload(gqlString, withAuth)
-        );
-        resolver.resolve(await this.checkGraphQlResponse(response));
-      } catch (error) {
-        resolver.reject(error);
-      }
-    });
+  public async mutation(gqlString: string, withAuth?: boolean) {
+    try {
+      const response = await fetch(
+        this.graphQlEndpoint,
+        // @ts-ignore
+        this.buildGraphQlPayload(gqlString, withAuth)
+      );
+      return await this.checkGraphQlResponse(response);
+    } catch (error) {
+      return error;
+    }
   }
 }
 
