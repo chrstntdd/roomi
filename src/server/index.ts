@@ -18,6 +18,7 @@ const app = express();
 
 /* Set mongoose promise to native ES6 promise */
 (<any>mongoose).Promise = Promise;
+mongoose.set('useCreateIndex', true);
 
 const ENV = process.env.NODE_ENV || 'development';
 const IS_PRODUCTION = ENV === 'production';
