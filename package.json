@@ -9,13 +9,13 @@
     "test-auto": "./node_modules/.bin/jest --watch --verbose false",
     "test-fast": "./node_modules/.bin/jest --silent",
     "test:debug": "node --cross-envinspect-brk ./node_modules/.bin/jest --runInBand --watch",
-    "s:dev": "cross-env NODE_ENV=development node fuse.js server-dev",
-    "s:prod": "cross-env NODE_ENV=production node fuse.js server-dev",
+    "s:dev": "concurrently -k -p \"[{name}]\" -n \"Server,Nodemon\" -c \"cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js -e js,ts,graphql\"",
+    "s:prod": "cross-env NODE_ENV=production node fuse.js server-prod",
     "c:dev": "cross-env NODE_ENV=development node fuse.js client-dev",
     "c:prod": "cross-env NODE_ENV=production node fuse.js client-prod",
     "c:test-prod": " rm -rf .fusebox/ && cross-env USE_SW=false NODE_ENV=production node fuse.js test-prod",
     "c:test-prod-sw": " rm -rf .fusebox/ && cross-env USE_SW=true NODE_ENV=production node fuse.js test-prod",
-    "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js\""
+    "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\""
   },
   "dependencies": {
     "autoprefixer": "^9.0.1",
