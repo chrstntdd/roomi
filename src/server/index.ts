@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -56,20 +56,26 @@ app.get('/ping', (_, res) => {
 });
 
 const typeDefs = importSchema(join(__dirname, 'graphql/schema.graphql'));
-const schema = makeExecutableSchema({ typeDefs, resolvers });
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
+  resolverValidationOptions: {
+    requireResolversForResolveType: false
+  }
+});
 
 app.use(
   '/graphql',
   cors({
     origin: 'http://localhost:4444'
   }),
-  graphql((request, response, graphQlParams) => {
+  graphql((request: Request, response, graphQlParams) => {
     return {
       schema,
       pretty: true,
       graphiql: !IS_PRODUCTION,
       context: {
-        token: ''
+        request
       },
       formatError: ({ extensions = {}, message, locations, stack = '', path }) => ({
         message,
