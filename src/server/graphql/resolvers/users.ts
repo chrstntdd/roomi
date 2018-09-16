@@ -1,22 +1,5 @@
-import { default as User, userSchema } from '../../models/user';
-
-type GraphQlErrorType = 'CLIENT' | 'SERVER';
-
-class ApiError extends Error {
-  constructor(type: GraphQlErrorType, errors) {
-    super(errors);
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ApiError);
-    }
-
-    this.extensions = {
-      date: new Date(),
-      type,
-      ...errors
-    };
-  }
-}
+import { userModel as User } from '../../models';
+import { ApiError } from '../../config/error';
 
 export default {
   signUp: async (_, { email, username, password }) => {
@@ -43,11 +26,15 @@ export default {
   signIn: async (_, { email, password }) => {
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error('There is no user with that email');
-    } else if (!(await user.authUser(password))) {
-      throw new Error('Incorrect email or password');
+      throw new ApiError('CLIENT', {
+        message: 'There is no user with that email'
+      });
+    } else if (!(await user.checkPassword(password))) {
+      throw new ApiError('CLIENT', {
+        message: 'Incorrect email or password'
+      });
     } else {
-      return user.createToken(user._id);
+      return { token: user.createToken(user._id) };
     }
   },
 
