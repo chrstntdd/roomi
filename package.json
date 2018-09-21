@@ -9,7 +9,7 @@
     "test-auto": "./node_modules/.bin/jest --watch --verbose false",
     "test-fast": "./node_modules/.bin/jest --silent",
     "test:debug": "node --cross-envinspect-brk ./node_modules/.bin/jest --runInBand --watch",
-    "s:dev": "concurrently -k -p \"[{name}]\" -n \"Server,Nodemon\" -c \"cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js -e js,ts,graphql\"",
+    "s:dev": "concurrently -k -p \"[{name}]\" -n \"Mongo,Server,Nodemon\" -c \"green.bold,magenta.bold,yellow.bold\" \"mongod\" \"cross-env NODE_ENV=development node fuse.js server-dev\"   \"nodemon build/server/index.js -e js,ts,graphql\"",
     "s:prod": "cross-env NODE_ENV=production node fuse.js server-prod",
     "c:dev": "cross-env NODE_ENV=development node fuse.js client-dev",
     "c:prod": "cross-env NODE_ENV=production node fuse.js client-prod",

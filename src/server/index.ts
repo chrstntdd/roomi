@@ -30,7 +30,7 @@ if (IS_PRODUCTION) {
   DATABASE_URL = process.env.MONGODB_URI;
   PORT = parseInt(process.env.PORT, 10);
 } else {
-  DATABASE_URL = process.env.TEST_DATABASE_URL;
+  DATABASE_URL = process.env.LOCAL_DATABASE_URL;
   PORT = 3000;
 }
 
@@ -64,6 +64,40 @@ const schema = makeExecutableSchema({
   }
 });
 
+const mongoClient = mongoose.connect(
+  DATABASE_URL,
+  { useNewUrlParser: true }
+);
+
+// CONNECTION EVENTS
+// When successfully connected
+mongoose.connection.on('connected', function() {
+  console.log('Mongoose default connection open to ' + DATABASE_URL);
+});
+
+// If the connection throws an error
+mongoose.connection.on('error', function(err) {
+  console.log('Mongoose default connection error: ' + err);
+});
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function() {
+  console.log('Mongoose default connection disconnected');
+});
+
+// If the Node process ends, close the Mongoose connection
+process.on('SIGINT', function() {
+  mongoose.connection.close(function() {
+    console.log('Mongoose default connection disconnected through app termination');
+    process.exit(0);
+  });
+});
+
+export interface GraphQlContext {
+  request: Request;
+  mongodb: typeof mongoose;
+}
+
 app.use(
   '/graphql',
   cors({
@@ -72,7 +106,7 @@ app.use(
   graphql((request: Request, response, graphQlParams) => {
     return {
       schema,
-      pretty: true,
+      pretty: !IS_PRODUCTION,
       graphiql: !IS_PRODUCTION,
       context: {
         request
@@ -92,12 +126,8 @@ app.use(
 
 let server;
 
-const runServer = async (dbURL: string = DATABASE_URL, port: number = PORT) => {
+const runServer = async (port: number = PORT) => {
   try {
-    await mongoose.connect(
-      dbURL,
-      { useNewUrlParser: true }
-    );
     await new Promise((resolve, reject) => {
       server = app
         .listen(port, () => {

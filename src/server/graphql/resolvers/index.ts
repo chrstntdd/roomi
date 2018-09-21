@@ -2,8 +2,10 @@ import { GraphQLScalarType } from 'graphql/type';
 import { GraphQLError } from 'graphql/error';
 import { Kind } from 'graphql/language';
 
-import PostResolvers from './blogpost';
+import Cursor from '../cursor';
+
 import UserResolvers from './users';
+import ListResolvers from './list';
 
 const validateValue = value => {
   if (isNaN(Date.parse(value))) {
@@ -13,21 +15,25 @@ const validateValue = value => {
 
 export default {
   Query: {
-    /* post queries */
-    getAllUserPosts: PostResolvers.getAllUserPosts,
-    getUserPost: PostResolvers.getUserPost,
+    getList: ListResolvers.getList,
+    lists: ListResolvers.lists,
 
     /* user queries */
     users: UserResolvers.getAllUsers
   },
   Mutation: {
-    /* post mutations */
-    createPost: PostResolvers.createPost,
-    updatePost: PostResolvers.updatePost,
-    deletePost: PostResolvers.deletePost,
     signIn: UserResolvers.signIn,
-    signUp: UserResolvers.signUp
+    signUp: UserResolvers.signUp,
+    createNewList: ListResolvers.createNewList
   },
+
+  ListConnection: {
+    totalCount: p => p.totalCount,
+    edges: p => p.edges,
+    pageInfo: p => p.pageInfo
+  },
+
+  Cursor,
 
   /*
    * alternate implementation that provides the date back as an int
