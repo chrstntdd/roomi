@@ -16,10 +16,9 @@ export class Cmd {
   private async checkGraphQlResponse(response) {
     const { errors, data } = await response.json();
 
+    if (errors && errors.length) return Promise.reject(Error(errors[0].message));
+
     if (response.ok && data) return Promise.resolve(data);
-    else {
-      return Promise.reject(Error(errors[0].message));
-    }
   }
 
   private buildGraphQlPayload(gqlString: string, withAuth?: boolean) {
@@ -43,7 +42,7 @@ export class Cmd {
         // @ts-ignore
         this.buildGraphQlPayload(gqlString, withAuth)
       );
-      return await this.checkGraphQlResponse(response);
+      return this.checkGraphQlResponse(response);
     } catch (error) {
       return error;
     }
