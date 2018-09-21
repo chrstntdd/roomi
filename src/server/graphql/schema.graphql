@@ -119,9 +119,9 @@ type Mutation {
     email: String!
     username: String!
     password: String!
-  ): Auth!
+  ): Auth
 
-  signIn(email: String!, password: String!): Auth!
+  signIn(username: String!, password: String!): Auth
 
   updateUser(
     userId: ID!
