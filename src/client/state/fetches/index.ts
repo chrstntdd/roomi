@@ -1,5 +1,8 @@
 import Cmd from '@/cmd';
 
+const saveToken = (jwt: string) =>
+  window.sessionStorage ? window.sessionStorage.setItem('jwt', jwt) : () => {};
+
 export default store => ({
   signUp: async (state, { email, username, password }) => {
     const mutationName = 'signUp';
@@ -11,14 +14,43 @@ export default store => ({
           }
         }
       `);
+
+      const jwt = response[mutationName].token;
+      saveToken(jwt);
+
+      store.setState({
+        isAuthenticated: true,
+        jwt
+      });
     } catch ({ message }) {
       store.setState({
         graphQlErrorMsg: message
       });
     }
+  },
 
-    store.setState({
-      jwt: response[mutationName].token
-    });
+  signIn: async (state, { username, password }) => {
+    const mutationName = 'signIn';
+    let response;
+    try {
+      response = await Cmd.mutation(`${mutationName} {
+          ${mutationName}(username: "${username}", password: "${password}") {
+            token
+          }
+        }
+        `);
+
+      const jwt = response[mutationName].token;
+      saveToken(jwt);
+
+      store.setState({
+        isAuthenticated: true,
+        jwt: response[mutationName].token
+      });
+    } catch ({ message }) {
+      store.setState({
+        graphQlErrorMsg: message
+      });
+    }
   }
 });

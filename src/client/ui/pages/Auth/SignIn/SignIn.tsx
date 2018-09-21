@@ -8,8 +8,6 @@ import Form from 'packages/unrender/Form';
 import Toggle from 'packages/unrender/Toggle';
 import Input from '@/ui/components/Input';
 
-import { validateSignUpForm } from '@/ui/pages/Auth/helpers';
-
 import '../Auth.scss';
 
 interface PSignIn {}
@@ -18,12 +16,8 @@ interface SSignIn {}
 export class SignIn extends Component<PSignIn, SSignIn> {
   state = {};
 
-  handleSubmit = formValues => {
-    console.log(formValues);
-    validateSignUpForm(formValues).matchWith({
-      Success: data => console.log(data),
-      Failure: err => console.error(err)
-    });
+  handleSubmit = async formValues => {
+    await this.props.signIn(formValues);
   };
 
   render() {
