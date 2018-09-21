@@ -23,15 +23,15 @@ export default {
     }
   },
 
-  signIn: async (_, { email, password }) => {
-    const user = await User.findOne({ email });
+  signIn: async (_, { username, password }) => {
+    const user = await User.findOne({ username });
     if (!user) {
       throw new ApiError('CLIENT', {
-        message: 'There is no user with that email'
+        message: 'There is no user with that username'
       });
     } else if (!(await user.checkPassword(password))) {
       throw new ApiError('CLIENT', {
-        message: 'Incorrect email or password'
+        message: 'Incorrect username or password'
       });
     } else {
       return { token: user.createToken(user._id) };
