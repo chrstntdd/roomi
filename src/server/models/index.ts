@@ -42,11 +42,12 @@ const itemSchema = new Schema(
     priority: { type: String, enum: ['LOW', 'MEDIUM', 'HIGH'] },
     starred: { type: Boolean, default: false },
     checked: { type: Boolean, default: false },
-    content: String,
+    content: { type: String, trim: true },
     comments: Array,
     complete_date: Date,
     checked_date: Date,
-    reminder: [Date]
+    reminder: [Date],
+    owner: { type: Schema.Types.ObjectId, ref: 'User' }
   },
   { timestamps: true }
 );
@@ -63,8 +64,9 @@ type ListModel = Document & {
 
 const listSchema = new Schema(
   {
-    items: [itemSchema],
-    name: String,
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
+    items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
+    name: { type: String, trim: true },
     private: Boolean
   },
   { timestamps: true }
@@ -82,18 +84,18 @@ type UserModel = Document & {
   accountCreated: Date;
   roommates: [UserModel];
   checkPassword: (password: string) => Promise<Boolean>;
-  createToken: (id: string) => string;
+  createToken: (userId: string) => string;
 };
 
 const userSchema = new Schema(
   {
-    lists: [listSchema],
+    lists: [{ type: Schema.Types.ObjectId, ref: 'List' }],
     roommates: [this],
-    email: { type: String, required: true, unique: true },
-    firstName: String,
-    lastName: String,
-    password: { type: String, required: true },
-    username: { type: String, required: true, unique: true }
+    email: { type: String, required: true, unique: true, trim: true },
+    firstName: { type: String, trim: true },
+    lastName: { type: String, trim: true },
+    password: { type: String, required: true, trim: true },
+    username: { type: String, required: true, unique: true, trim: true }
   },
   { timestamps: true }
 );
