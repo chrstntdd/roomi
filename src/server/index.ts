@@ -25,12 +25,17 @@ const IS_PRODUCTION = ENV === 'production';
 let DATABASE_URL;
 let PORT;
 
-/* set environment variables */
 if (IS_PRODUCTION) {
   DATABASE_URL = process.env.MONGODB_URI;
   PORT = parseInt(process.env.PORT, 10);
 } else {
-  DATABASE_URL = process.env.LOCAL_DATABASE_URL;
+  // Windows development will use the remote mLab DB to forgo spinning
+  // up a mongodb server locally
+  if (process.env.IS_WINDOWS) {
+    DATABASE_URL = process.env.TEST_DATABASE_URL;
+  } else {
+    DATABASE_URL = process.env.LOCAL_DATABASE_URL;
+  }
   PORT = 3000;
 }
 
