@@ -17,3 +17,15 @@ var sessionStorageMock = (function() {
 Object.defineProperty(window, 'sessionStorage', {
   value: sessionStorageMock
 });
+
+class Worker {
+  constructor(stringUrl) {
+    this.url = stringUrl;
+    this.onmessage = jest.fn();
+    this.addEventListener = jest.fn((msg, fn) => {});
+    this.postMessage = jest.fn(msg => {});
+    this.terminate = jest.fn();
+  }
+}
+
+window.Worker = Worker;
