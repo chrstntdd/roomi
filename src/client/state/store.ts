@@ -1,9 +1,9 @@
-import createStore from 'unistore';
+import createStore, { Store } from 'unistore';
 import devtools from 'unistore/devtools';
 
 import fetches from './fetches';
 
-const initialState = {
+const initialState: RootState = {
   email: '',
   firstName: '',
   friends: [],
@@ -15,12 +15,12 @@ const initialState = {
   role: ''
 };
 
-const store =
+const store: Store<RootState> =
   process.env.NODE_ENV === 'development'
     ? devtools(createStore(initialState))
     : createStore(initialState);
 
-const actions = store => ({
+const actions = (store: Store<RootState>) => ({
   ...fetches(store)
 });
 

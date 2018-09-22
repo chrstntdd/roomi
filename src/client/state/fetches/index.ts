@@ -1,9 +1,11 @@
+import { Store } from 'unistore';
+
 import Cmd from '@/cmd';
 
 const saveToken = (jwt: string) =>
   window.sessionStorage ? window.sessionStorage.setItem('jwt', jwt) : () => {};
 
-export default store => ({
+export default (store: Store<RootState>) => ({
   signUp: async (state, { email, username, password }) => {
     const mutationName = 'signUp';
     let response;
