@@ -18,9 +18,28 @@ html * {
   --button-color: #394053;
 }
 
+@function between($to, $from, $toWidth, $fromWidth) {
+  $slope: ($to - $from) / ($toWidth - $fromWidth);
+  $base: $from - $slope * $fromWidth;
+  @return calc(#{$base} + #{100vw * $slope});
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - -
+// BREAKPOINTS
+// - - - - - - - - - - - - - - - - - - - - - - - - -
+$bp-xxsmall: 320px;
+$bp-xsmall: 576px;
+$bp-small: 768px;
+$bp-medium: 1024px;
+$bp-large: 1366px;
+$bp-xlarge: 1920px;
+$bp-xxlarge: 2560px;
+
+
 html,
 body {
   height: 100%;
+  width: 100%;
   background-color: #f5f4f6;
   font: 16px/1.8 -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
     Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
@@ -28,6 +47,19 @@ body {
 
 body {
   overflow-x: hidden;
+}
+
+.kinda-center {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :global .flex-down {

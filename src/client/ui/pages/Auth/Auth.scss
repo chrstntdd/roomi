@@ -1,3 +1,5 @@
+@import '../../../styles/index.scss';
+
 /* HSL */
 $color1: hsla(195%, 55%, 46%, 1);
 $color2: hsla(195%, 53%, 48%, 1);
@@ -16,14 +18,26 @@ $errorColor: darken(#ec6d75, 10%);
 
 $LABEL_COLOR: $color1;
 
+main {
+  min-height: 100vh;
+  min-width: 100vw;
+  // background: linear-gradient(160deg,#c44040,#c9446b,#bf5494,#a869b4,#887dc9,#638ed1,#469bcf,#40a5c4);
+}
+
+
+:root {
+  --border-radius: 0.3rem;
+}
+
 .form-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
-  max-width: 320px;
+  border-radius: var(--border-radius);
   background-color: white;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+  width: between(300px, 560px, $bp-xxsmall, $bp-xxlarge);
 
   .auth-toggle {
     display: flex;
@@ -32,19 +46,20 @@ $LABEL_COLOR: $color1;
     justify-content: space-around;
     align-items: center;
     height: 3.5rem;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    box-shadow: 0 5px 5px -5px #ccc;
 
     .choice {
-      background-color: $color3;
       width: 50%;
       text-align: center;
       cursor: pointer;
       padding: 1rem;
       text-decoration: none;
-      color: #eee;
+      
       &.active {
-        background-color: $color4;
+        border-bottom: 3px solid $color4;
+        color: black;
         font-weight: 600;
       }
     }
@@ -53,12 +68,9 @@ $LABEL_COLOR: $color1;
   .password-input-container {
     position: relative;
     .visibility-toggle {
-      right: 0;
-      top: 2rem;
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      bottom: 2.5rem;
+      left: 16rem;
+      position: relative;
       border: none;
       background-color: transparent;
 

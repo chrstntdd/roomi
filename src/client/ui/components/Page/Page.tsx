@@ -12,7 +12,7 @@ export class Page extends Component {
   }
 
   render() {
-    return <div>{this.props.children}</div>;
+    return <div className="page-container">{this.props.children}</div>;
   }
 }
 
