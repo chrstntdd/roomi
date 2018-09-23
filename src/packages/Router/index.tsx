@@ -194,7 +194,7 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
       ? requestFocus(this.node)
       : initialRender
         ? (initialRender = false)
-        : this.node.focus();
+        : !this.node.contains(document.activeElement) && this.node.focus();
   }
 
   requestFocus = node => {
@@ -505,5 +505,6 @@ export {
   navigate,
   BaseContext,
   Redirect,
-  Link
+  Link,
+  globalHistory
 };

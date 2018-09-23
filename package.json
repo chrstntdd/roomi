@@ -21,7 +21,10 @@
     "precommit": "yarn run test-fast && lint-staged"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": ["./node_modules/.bin/prettier --write", "git add"]
+    "src/**/*.{ts,tsx}": [
+      "./node_modules/.bin/prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "autoprefixer": "^9.0.1",
