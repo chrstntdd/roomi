@@ -3,6 +3,18 @@ import devtools from 'unistore/devtools';
 
 import fetches from './fetches';
 
+export type RootState = {
+  readonly email: string;
+  readonly firstName: string;
+  readonly friends: any[];
+  readonly graphQlErrorMsg: string;
+  readonly isAuthenticated: boolean;
+  readonly jwt: string;
+  readonly lastName: string;
+  readonly lists: any[];
+  readonly role: string;
+};
+
 const initialState: RootState = {
   email: '',
   firstName: '',

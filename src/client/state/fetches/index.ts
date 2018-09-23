@@ -2,6 +2,18 @@ import { Store } from 'unistore';
 
 import { sha256 } from '@/util';
 import Cmd from '@/cmd';
+import { RootState } from '@/state/store';
+
+export interface SignInMutation {
+  username: string;
+  password: string;
+}
+
+export interface SignUpMutation {
+  email: string;
+  username: string;
+  password: string;
+}
 
 const saveToken = (jwt: string) =>
   window.sessionStorage ? window.sessionStorage.setItem('jwt', jwt) : () => {};
