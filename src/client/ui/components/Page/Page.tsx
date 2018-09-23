@@ -7,6 +7,10 @@ import './Page.scss';
  * will render the main <Router /> component.
  */
 export class Page extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return <div>{this.props.children}</div>;
   }

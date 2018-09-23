@@ -23,6 +23,10 @@ interface SInput {
  * added to the <input> element.
  */
 export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputElement>, SInput> {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     isValid: false,
     validationMsg: null

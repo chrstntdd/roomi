@@ -9,6 +9,10 @@ export const generateLazyComponent = loader => {
   let Component = null;
 
   return class AsyncRouteComponent extends React.Component {
+    constructor(props) {
+      super(props);
+    }
+
     static displayName = 'AsyncComponent';
 
     state = { Component };

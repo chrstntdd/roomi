@@ -19,6 +19,10 @@ const SignUp = generateLazyComponent(() => import('@/ui/pages/Auth/SignUp'));
  * AS WELL OR ON AN INDIVIDUAL COMPONENT LEVEL.
  */
 class App extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <Page>
