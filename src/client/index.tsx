@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 import { Provider } from 'unistore/react';
 
 import { store } from '@/state/store';
-
 import App from '@/ui/App';
 
 import '@/styles/index.scss';
