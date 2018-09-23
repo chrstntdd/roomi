@@ -1,12 +1,14 @@
 import { Store } from 'unistore';
 
+import { sha256 } from '@/util';
 import Cmd from '@/cmd';
 
 const saveToken = (jwt: string) =>
   window.sessionStorage ? window.sessionStorage.setItem('jwt', jwt) : () => {};
 
 export default (store: Store<RootState>) => ({
-  signUp: async (state, { email, username, password }) => {
+  signUp: async (state, { email, username, password: plainPassword }: SignUpMutation) => {
+    const password = await sha256(plainPassword);
     const mutationName = 'signUp';
     let response;
     try {
@@ -31,7 +33,8 @@ export default (store: Store<RootState>) => ({
     }
   },
 
-  signIn: async (state, { username, password }) => {
+  signIn: async (state, { username, password: plainPassword }: SignInMutation) => {
+    const password = await sha256(plainPassword);
     const mutationName = 'signIn';
     let response;
     try {

@@ -77,7 +77,7 @@ context(
         target: 'esnext',
         outDir: SERVER_OUT,
         sourceMap: true,
-        ...(IS_PRODUCTION ? {} : { watch: true })
+        watch: !IS_PRODUCTION
       });
     }
 
@@ -129,8 +129,6 @@ task('copy-schema', () =>
   src('./**/*.graphql', { base: './src/server/graphql' }).dest(join(SERVER_OUT, 'graphql'))
 );
 
-task('copy-worker', () => src('./**/*-worker.js', { base: './src/client' }).dest(CLIENT_OUT));
-
 task('minify-html', () => {
   const fileContents = readFileSync(`${CLIENT_OUT}/index.html`, 'UTF-8');
 
@@ -176,15 +174,13 @@ task('gen-sw', async () => {
 /* MAIN BUILD TASK CHAINS  */
 
 // Compile client code for development
-task('client-dev', ['client-clean', 'client-dev-build', 'copy-worker'], _ =>
+task('client-dev', ['client-clean', 'client-dev-build'], _ =>
   info('Client code compiled. Get to building  🚧  🛠  💰  🏗  ')
 );
 
 // Compile client code for production
-task(
-  'client-prod',
-  ['client-clean', 'client-prod-build', 'minify-html', 'gen-sw', 'copy-worker'],
-  _ => info('🚀  Client code ready for production, lets secure this bag 🚀')
+task('client-prod', ['client-clean', 'client-prod-build', 'minify-html', 'gen-sw'], _ =>
+  info('🚀  Client code ready for production, lets secure this bag 🚀')
 );
 
 // Compile server

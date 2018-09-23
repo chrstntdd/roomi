@@ -11,3 +11,15 @@ type RootState = {
   readonly lists: any[];
   readonly role: string;
 };
+
+// MUTATION INPUTS
+interface SignInMutation {
+  username: string;
+  password: string;
+}
+
+interface SignUpMutation {
+  email: string;
+  username: string;
+  password: string;
+}

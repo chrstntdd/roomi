@@ -28,4 +28,11 @@ class Worker {
   }
 }
 
+class TextEncoder {
+  constructor() {
+    this.encode = jest.fn();
+  }
+}
+
 window.Worker = Worker;
+window.TextEncoder = TextEncoder;

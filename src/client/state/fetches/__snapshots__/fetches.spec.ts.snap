@@ -1,6 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`signUp 1`] = `
+exports[`fetches signIn mutation the success case should hash the password, make a mutation, and set a token 1`] = `
+Array [
+  "signIn {
+          signIn(username: \\"b\\", password: \\"d\\") {
+            token
+          }
+        }
+        ",
+]
+`;
+
+exports[`fetches signUp mutation the success case should hash the password, make a mutation, and set a token 1`] = `
 Array [
   "signUp {
           signUp(email: \\"a\\", username: \\"b\\", password: \\"d\\") {

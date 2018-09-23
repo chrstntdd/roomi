@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'unistore/react';
 
-import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 import { actions } from '@/state/store';
 import { Link } from 'packages/Router';
 import Form from 'packages/unrender/Form';
 import Toggle from 'packages/unrender/Toggle';
 import Input from '@/ui/components/Input';
+import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 
 import '../Auth.scss';
 
-interface PSignIn {}
+interface PSignIn {
+  signIn: (validData: SignInMutation) => void;
+}
 interface SSignIn {}
 
 export class SignIn extends Component<PSignIn, SSignIn> {
-  state = {};
+  constructor(props) {
+    super(props);
+  }
 
-  handleSubmit = async formValues => {
-    await this.props.signIn(formValues);
+  handleSubmit = async ({ username, password }) => {
+    await this.props.signIn({ username, password });
   };
 
   render() {
@@ -70,4 +74,4 @@ export class SignIn extends Component<PSignIn, SSignIn> {
 export default connect(
   'jwt',
   actions
-)(SignIn);
+)((props: PSignIn) => <SignIn {...props} />);

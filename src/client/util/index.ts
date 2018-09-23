@@ -27,3 +27,15 @@ export const classNames = (arr: string[]): string => {
 /* STRING FORMATTING */
 export const capitalizeFirstChar = (value: string): string =>
   value.charAt(0).toUpperCase() + value.slice(1);
+
+export async function sha256(input) {
+  const inputBuf = new TextEncoder().encode(input);
+
+  const hashBuf = await crypto.subtle.digest('SHA-256', inputBuf);
+
+  const hashArr = Array.from(new Uint8Array(hashBuf));
+
+  const hashHex = hashArr.map(h => ('00' + h.toString(16)).slice(-2)).join('');
+
+  return hashHex;
+}

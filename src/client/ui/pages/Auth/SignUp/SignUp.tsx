@@ -14,58 +14,21 @@ import { validateSignUpForm, isValidEmail, isValidPassword } from '@/ui/pages/Au
 
 import '../Auth.scss';
 
-interface SignUpMutation {
-  email: string;
-  username: string;
-  password: string;
-}
-
 interface PSignUp {
   signUp: (validData: SignUpMutation) => void;
 }
 
 interface SSignUp {
-  hashFromWorker: null | string;
   validationMessages?: string;
 }
 
 export class SignUp extends Component<PSignUp, SSignUp> {
   constructor(props) {
     super(props);
-
-    const worker = new Worker('hash-worker.js');
-
-    worker.addEventListener('message', this.handleWorkerMessages);
-
-    this.worker = worker;
-    this.state = {
-      hashFromWorker: null
-    };
   }
 
-  worker: Worker;
-
-  componentWillUnmount() {
-    this.worker.terminate();
-  }
-
-  handleWorkerMessages = msg => {
-    switch (msg.data.type) {
-      case 'HASHED_PASSWORD':
-        this.setState(prevState => {
-          return {
-            hashFromWorker: msg.data.hash
-          };
-        });
-    }
-  };
-
-  handleSubmit = async ({ username, email }) => {
-    await this.props.signUp({ username, email, password: this.state.hashFromWorker });
-  };
-
-  handlePasswordChange = e => {
-    this.worker.postMessage(e.target.value);
+  handleSubmit = async ({ username, email, password }) => {
+    await this.props.signUp({ username, email, password });
   };
 
   handleFailedValidation(err: string) {
@@ -114,7 +77,6 @@ export class SignUp extends Component<PSignUp, SSignUp> {
                         id={this.passwordInputId}
                         type={on ? 'password' : 'text'}
                         {...input(this.passwordInputId).connect}
-                        onChange={this.handlePasswordChange}
                       />
                       <button className="visibility-toggle" onClick={toggle}>
                         {on ? <ShowPasswordIcon /> : <HidePasswordIcon />}
@@ -145,4 +107,4 @@ export class SignUp extends Component<PSignUp, SSignUp> {
 export default connect(
   'jwt',
   actions
-)(SignUp);
+)((props: PSignUp) => <SignUp {...props} />);
