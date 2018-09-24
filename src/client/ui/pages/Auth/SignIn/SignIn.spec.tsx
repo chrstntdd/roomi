@@ -6,8 +6,12 @@ import { SignIn } from './';
 
 afterEach(cleanup);
 
+const props = {
+  signIn: jest.fn(x => x)
+};
+
 test('smoke', () => {
-  const { getByLabelText, getByText } = render(<SignIn />);
+  const { getByLabelText, getByText } = render(<SignIn {...props} />);
 
   expect(getByLabelText(/username/i)).toBeInTheDocument();
   expect(getByLabelText(/password/i)).toBeInTheDocument();

@@ -110,6 +110,8 @@ export class SignIn extends Component<PSignIn, SSignIn> {
                           </animated.div>
                         );
                       }
+
+                      return null;
                     })}
                   </Trail>
                 </div>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Transition } from 'react-spring';
 
-import { Router, Link, Location } from 'packages/Router';
+import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
 
 import generateLazyComponent from '@/ui/components/LazyComponent';
@@ -14,24 +13,24 @@ const NotFound = generateLazyComponent(() => import('@/ui/pages/NotFound'));
 const SignIn = generateLazyComponent(() => import('@/ui/pages/Auth/SignIn'));
 const SignUp = generateLazyComponent(() => import('@/ui/pages/Auth/SignUp'));
 
-const TransitionRouter = props => (
-  <Location>
-    {({ location }) => (
-      <Transition
-        keys={location.pathname}
-        from={{ opacity: 0, transform: 'scale3d(0.5,0.5,0.5)' }}
-        enter={{ opacity: 1, transform: 'scale3d(1,1,1)' }}
-        leave={{ opacity: 0, transform: 'scale3d(0.5,0.5,0.5)' }}
-      >
-        {styles => (
-          <Router location={location} style={styles}>
-            {props.children}
-          </Router>
-        )}
-      </Transition>
-    )}
-  </Location>
-);
+// const TransitionRouter = props => (
+//   <Location>
+//     {({ location }) => (
+//       <Transition
+//         keys={location.pathname}
+//         from={{ opacity: 0, transform: 'scale3d(0.5,0.5,0.5)' }}
+//         enter={{ opacity: 1, transform: 'scale3d(1,1,1)' }}
+//         leave={{ opacity: 0, transform: 'scale3d(0.5,0.5,0.5)' }}
+//       >
+//         {styles => (
+//           <Router location={location} style={styles}>
+//             {props.children}
+//           </Router>
+//         )}
+//       </Transition>
+//     )}
+//   </Location>
+// );
 
 class Nav extends Component {
   constructor(props) {

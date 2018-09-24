@@ -21,7 +21,7 @@ const CLIENT_OUT = join(__dirname, 'build/client');
 const SERVER_OUT = join(__dirname, 'build/server');
 const TEMPLATE = join(__dirname, 'src/client/index.html');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const USE_SERVICE_WORKER = process.env.USE_SW === true;
+const USE_SERVICE_WORKER = process.env.USE_SW;
 
 const { sw } = require(join(__dirname, 'src/client/inline-sw'));
 
@@ -74,10 +74,10 @@ context(
 
     async compileServer() {
       await tsc('src/server', {
-        target: 'esnext',
+        target: 'ESNext',
         outDir: SERVER_OUT,
         sourceMap: true,
-        watch: !IS_PRODUCTION
+        ...(IS_PRODUCTION ? {} : { watch: true })
       });
     }
 
