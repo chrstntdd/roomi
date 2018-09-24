@@ -1,4 +1,4 @@
-import { store } from '@/state/store';
+import { store, initialState } from '@/state/store';
 import Cmd from '@/cmd';
 import { sha256 } from '@/util';
 
@@ -9,7 +9,7 @@ jest.mock('@/util', () => ({
   sha256: jest.fn(x => x)
 }));
 
-const _ = undefined;
+const _ = initialState;
 
 describe('fetches', () => {
   afterEach(() => {

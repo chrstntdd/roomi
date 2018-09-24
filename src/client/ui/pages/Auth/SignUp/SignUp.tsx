@@ -22,6 +22,7 @@ interface PSignUp {
 
 interface SSignUp {
   validationMessages?: string;
+  formItems: string[];
 }
 
 export class SignUp extends Component<PSignUp, SSignUp> {
@@ -145,6 +146,8 @@ export class SignUp extends Component<PSignUp, SSignUp> {
                           </animated.div>
                         );
                       }
+
+                      return null;
                     })}
                   </Trail>
                 </div>

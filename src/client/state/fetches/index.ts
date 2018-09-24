@@ -1,8 +1,6 @@
-import { Store } from 'unistore';
-
 import { sha256 } from '@/util';
 import Cmd from '@/cmd';
-import { RootState } from '@/state/store';
+import { RootState, GlobalStore } from '@/state/store';
 
 export interface SignInMutation {
   username: string;
@@ -15,11 +13,16 @@ export interface SignUpMutation {
   password: string;
 }
 
+export interface Fetches {
+  signUp: (state: RootState, SignUpMutation) => void;
+  signIn: (state: RootState, SignInMutation) => void;
+}
+
 const saveToken = (jwt: string) =>
   window.sessionStorage ? window.sessionStorage.setItem('jwt', jwt) : () => {};
 
-export default (store: Store<RootState>) => ({
-  signUp: async (state, { email, username, password: plainPassword }: SignUpMutation) => {
+export default (store: GlobalStore): Fetches => ({
+  signUp: async (_, { email, username, password: plainPassword }) => {
     const password = await sha256(plainPassword);
     const mutationName = 'signUp';
     let response;
@@ -45,7 +48,7 @@ export default (store: Store<RootState>) => ({
     }
   },
 
-  signIn: async (state, { username, password: plainPassword }: SignInMutation) => {
+  signIn: async (_, { username, password: plainPassword }) => {
     const password = await sha256(plainPassword);
     const mutationName = 'signIn';
     let response;

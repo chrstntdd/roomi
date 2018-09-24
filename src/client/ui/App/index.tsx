@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'unistore/react';
 
 import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
+
+import { actions } from '@/state/store';
+import { throttle } from '@/util';
 
 import generateLazyComponent from '@/ui/components/LazyComponent';
 
@@ -37,6 +41,10 @@ class Nav extends Component {
     super(props);
   }
 
+  state = {
+    navExpanded: false
+  };
+
   render() {
     return (
       <nav className="siteNav">
@@ -60,14 +68,35 @@ class Nav extends Component {
   }
 }
 
+interface PApp {
+  setWindowWidth: ({ windowWidth: number }) => void;
+}
+
+interface SApp {}
 /**
  * @description CURRENT CODE SPLITTING IMPLEMENTATION SPLITS
  * AT THE TOP LEVEL, BUT IT CAN BE DONE LOWER DOWN IN THE TREE
  * AS WELL OR ON AN INDIVIDUAL COMPONENT LEVEL.
  */
-class App extends Component {
+class App extends Component<PApp, SApp> {
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    window.addEventListener(
+      'resize',
+      throttle(200, () => {
+        this.props.setWindowWidth({
+          windowWidth: document.documentElement.clientWidth
+        });
+      })
+    );
+  }
+
+  componentWillUnmount() {
+    // @ts-ignore
+    window.removeEventListener('resize', throttle);
   }
 
   render() {
@@ -85,4 +114,8 @@ class App extends Component {
     );
   }
 }
-export default App;
+
+export default connect(
+  '',
+  actions
+)(App);
