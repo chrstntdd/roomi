@@ -44,6 +44,10 @@ interface PRouterImpl {
 interface SRouterImpl {}
 
 class RouterImpl extends React.PureComponent<PRouterImpl, SRouterImpl> {
+  constructor(props) {
+    super(props);
+  }
+
   static defaultProps = {
     primary: true
   };
@@ -139,6 +143,10 @@ let initialRender = true;
 let focusHandlerCount = 0;
 
 class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerImpl> {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     shouldFocus: null
   };
@@ -284,6 +292,10 @@ interface SLocationProvider {
 }
 
 class LocationProvider extends React.Component<PLocationProvider, SLocationProvider> {
+  constructor(props) {
+    super(props);
+  }
+
   public static defaultProps: Partial<PLocationProvider> = {
     history: globalHistory
   };
@@ -376,7 +388,11 @@ const ServerLocation = ({ url, children }) => (
  * Redirect START ///////////////////////////////////////////////
  */
 
-function RedirectRequest(uri: string) {
+interface IRedirectRequest {
+  uri: string;
+}
+
+function RedirectRequest(this: IRedirectRequest, uri: string) {
   this.uri = uri;
 }
 
@@ -397,6 +413,9 @@ interface PRedirectImpl {
 interface SRedirectImpl {}
 
 class RedirectImpl extends React.Component<PRedirectImpl, SRedirectImpl> {
+  constructor(props) {
+    super(props);
+  }
   // Support React < 16 with this hook
   componentDidMount() {
     let {

@@ -163,4 +163,5 @@ export class SignUp extends Component<PSignUp, SSignUp> {
 export default connect(
   'jwt',
   actions
-)((props: PSignUp) => <SignUp {...props} />);
+  // @ts-ignore
+)(SignUp);

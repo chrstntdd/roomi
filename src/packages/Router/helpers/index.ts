@@ -18,10 +18,15 @@ const createNamedContext = (name: string, defaultValue?: any): React.Context<any
   return Ctx;
 };
 
+// Route component props
+interface PRoute {
+  children: any;
+}
+
 interface Route {
   default?: boolean;
   path?: string;
-  value: React.Component;
+  value?: React.ReactElement<PRoute>;
 }
 
 interface ReturnRoute {
@@ -29,7 +34,7 @@ interface ReturnRoute {
   route: {
     default?: any;
     path: string;
-    value: React.Component;
+    value: React.ReactElement<PRoute>;
   };
   uri: string;
 }

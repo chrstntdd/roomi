@@ -118,4 +118,5 @@ class App extends Component<PApp, SApp> {
 export default connect(
   '',
   actions
+  // @ts-ignore
 )(App);

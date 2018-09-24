@@ -127,4 +127,5 @@ export class SignIn extends Component<PSignIn, SSignIn> {
 export default connect(
   'jwt',
   actions
-)((props: PSignIn) => <SignIn {...props} />);
+  // @ts-ignore
+)(SignIn);

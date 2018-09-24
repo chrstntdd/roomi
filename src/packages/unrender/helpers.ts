@@ -4,7 +4,8 @@ function set(updater, arg) {
   return typeof updater === 'function' ? updater(arg) : updater;
 }
 
-function composeOnChange(originalOnChange = noop, propName) {
+function composeOnChange(originalOnChange, propName) {
+  !originalOnChange && (originalOnChange = noop);
   return function(state) {
     originalOnChange(state[propName]);
   };
