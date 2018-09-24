@@ -3,9 +3,11 @@
 
 # Output
 /build
+/dist
 
 # Misc
 /.fusebox
 /coverage
 /.docz
 /.env
+/.awcache

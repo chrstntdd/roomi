@@ -18,7 +18,9 @@
     "c:test-prod-sw": " rm -rf .fusebox/ && cross-env USE_SW=true NODE_ENV=production node fuse.js test-prod",
     "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon,Mongo\" -c \"yellow.bold,cyan.bold,green.bold,green.underline\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\" \"mongod\"",
     "full:dev:win": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\"",
-    "precommit": "yarn run test-fast && lint-staged"
+    "precommit": "yarn run test-fast && lint-staged",
+    "webpack": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --display \"none\" -p --config webpack.config.js",
+    "webpack:dev": "./node_modules/.bin/webpack-dev-server --color -d --config webpack.config.js"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -69,19 +71,35 @@
     "@types/react": "^16.4.14",
     "@types/react-dom": "^16.0.7",
     "@types/sanitizer": "^0.0.28",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-jest": "^23.6.0",
     "babel-plugin-dynamic-import-node": "^2.1.0",
+    "clean-webpack-plugin": "^0.1.19",
     "concurrently": "^4.0.1",
     "cross-env": "^5.2.0",
+    "css-loader": "^1.0.0",
+    "hard-source-webpack-plugin": "^0.12.0",
+    "html-webpack-plugin": "^3.2.0",
     "husky": "^1.0.0-rc.15",
     "jest": "^23.6.0",
     "jest-dom": "^1.12.1",
     "jest-watch-typeahead": "^0.2.0",
     "lint-staged": "^7.3.0",
+    "mini-css-extract-plugin": "^0.4.3",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss-loader": "^3.0.0",
     "prettier": "^1.14.3",
     "react-testing-library": "^5.1.0",
+    "sass-loader": "^7.1.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.0",
+    "terser-webpack-plugin": "^1.1.0",
     "ts-jest": "23.1.4",
-    "uglify-es": "^3.3.9"
+    "uglify-es": "^3.3.9",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.8",
+    "webpack-stylish": "^0.1.8"
   },
   "jest": {
     "watchPlugins": [
