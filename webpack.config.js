@@ -85,7 +85,7 @@ module.exports = {
   },
 
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    ...(!IS_PRODUCTION ? [new CleanWebpackPlugin(['dist'])] : []),
     new HtmlWebpackPlugin({
       template: './src/client/index.html',
       title: 'Roomi',
