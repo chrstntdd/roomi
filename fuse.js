@@ -7,6 +7,7 @@ const {
   WebIndexPlugin
 } = require('fuse-box');
 const { src, task, context, tsc, exec } = require('fuse-box/sparky');
+const { TypeChecker } = require('fuse-box-typechecker');
 const { join } = require('path');
 const express = require('express');
 const autoprefixer = require('autoprefixer');
@@ -31,6 +32,10 @@ context(
       return FuseBox.init({
         homeDir: 'src',
         output: `${CLIENT_OUT}/$name.js`,
+        log: {
+          enabled: IS_PRODUCTION,
+          showBundledFiles: IS_PRODUCTION
+        },
         target: 'browser',
         sourceMaps: true,
         cache: !IS_PRODUCTION,
@@ -93,6 +98,15 @@ context(
   }
 );
 
+const typeguard = TypeChecker({
+  tsConfig: './tsconfig.json',
+  basePath: './',
+  name: '',
+  tsConfigOverride: {
+    include: ['src/client/**/*.ts', 'src/client/**/*.tsx']
+  }
+});
+
 task('client-dev-build', async context => {
   const fuse = context.build();
 
@@ -104,6 +118,8 @@ task('client-dev-build', async context => {
     .watch()
     .instructions('> client/index.tsx');
 
+  typeguard.runWatch('./src');
+
   await fuse.run();
 });
 
@@ -114,6 +130,8 @@ task('client-prod-build', async context => {
     .bundle('app')
     .splitConfig({ dest: '/bundles' })
     .instructions('!> client/index.tsx');
+
+  typeguard.runAsync();
 
   context.testProd && context.startDevServer(fuse);
 
