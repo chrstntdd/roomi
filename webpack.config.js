@@ -42,7 +42,6 @@ module.exports = {
     mergeDuplicateChunks: true,
     minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
         sourceMap: true
       }),
