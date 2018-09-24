@@ -19,8 +19,8 @@
     "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon,Mongo\" -c \"yellow.bold,cyan.bold,green.bold,green.underline\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\" \"mongod\"",
     "full:dev:win": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\"",
     "precommit": "yarn run test-fast && lint-staged",
-    "webpack": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --display \"none\" -p --config webpack.config.js",
-    "webpack:dev": "./node_modules/.bin/webpack-dev-server --color -d --config webpack.config.js"
+    "webpack": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --display none -p --config webpack.config.js",
+    "webpack:dev": "./node_modules/.bin/webpack-dev-server --quiet --color -d --config webpack.config.js"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [

@@ -15,17 +15,30 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: './static/js/main.[hash:8].js',
-    chunkFilename: './static/js/bundles/[id].[contenthash:8].chunk.js'
+    chunkFilename: './static/js/bundles/[name].[contenthash:8].chunk.js',
+    devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+    devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
   },
 
   devServer: {
     compress: true,
     contentBase: path.resolve(__dirname, 'dist'),
     historyApiFallback: true,
-    hot: !IS_PRODUCTION
+    useLocalIp: true,
+    host: '0.0.0.0',
+    overlay: {
+      warnings: true,
+      errors: true
+    }
   },
 
+  // Enable sourcemaps for debugging webpack's output.
+  devtool: 'source-map',
+
   optimization: {
+    splitChunks: {
+      chunks: 'all'
+    },
     mergeDuplicateChunks: true,
     minimizer: [
       new TerserPlugin({
@@ -36,9 +49,6 @@ module.exports = {
       new OptimizeCSSAssetsPlugin({})
     ]
   },
-
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: 'source-map',
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
@@ -93,7 +103,6 @@ module.exports = {
       }
     }),
     new HardSourceWebpackPlugin(),
-    ...(!IS_PRODUCTION ? [new webpack.HotModuleReplacementPlugin()] : []),
     new MiniCssExtractPlugin({
       filename: IS_PRODUCTION ? './static/css/main.[contenthash:8].css' : '[id].css',
       chunkFilename: IS_PRODUCTION ? './static/css/[id].[contenthash:8].css' : '[id].css'
