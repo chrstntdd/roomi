@@ -77,7 +77,7 @@ context(
         target: 'ESNext',
         outDir: SERVER_OUT,
         sourceMap: true,
-        watch: !IS_PRODUCTION
+        ...(IS_PRODUCTION ? {} : { watch: true })
       });
     }
 
