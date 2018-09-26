@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Loadable from 'react-loadable';
 import { connect } from 'unistore/react';
 
 import { Router, Link } from 'packages/Router';
@@ -7,15 +8,19 @@ import Page from '@/ui/components/Page';
 import { actions } from '@/state/store';
 import { throttle } from '@/util';
 
-import generateLazyComponent from '@/ui/components/LazyComponent';
-
 import './App.scss';
 
-const Home = generateLazyComponent(() => import('@/ui/pages/Home'));
-const Dashboard = generateLazyComponent(() => import('@/ui/pages/Dashboard'));
-const NotFound = generateLazyComponent(() => import('@/ui/pages/NotFound'));
-const SignIn = generateLazyComponent(() => import('@/ui/pages/Auth/SignIn'));
-const SignUp = generateLazyComponent(() => import('@/ui/pages/Auth/SignUp'));
+function Loading() {
+  return <div>Loading...</div>;
+}
+
+const shared = { loading: Loading };
+
+const Home = Loadable({ loader: () => import('@/ui/pages/Home'), ...shared });
+const Dashboard = Loadable({ loader: () => import('@/ui/pages/Dashboard'), ...shared });
+const NotFound = Loadable({ loader: () => import('@/ui/pages/NotFound'), ...shared });
+const SignIn = Loadable({ loader: () => import('@/ui/pages/Auth/SignIn'), ...shared });
+const SignUp = Loadable({ loader: () => import('@/ui/pages/Auth/SignUp'), ...shared });
 
 // const TransitionRouter = props => (
 //   <Location>
