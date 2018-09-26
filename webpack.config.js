@@ -1,10 +1,8 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const Stylish = require('webpack-stylish');
 
@@ -13,9 +11,10 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 module.exports = {
   entry: path.resolve(__dirname, 'src/client/index.tsx'),
   output: {
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
-    filename: './static/js/main.[hash:8].js',
-    chunkFilename: './static/js/bundles/[name].[contenthash:8].chunk.js',
+    filename: 'static/js/main.[hash:8].js',
+    chunkFilename: 'static/js/bundles/[name].[contenthash:8].chunk.js',
     devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
   },
@@ -37,7 +36,14 @@ module.exports = {
 
   optimization: {
     splitChunks: {
-      chunks: 'all'
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          enforce: true,
+          chunks: 'all'
+        }
+      }
     },
     mergeDuplicateChunks: true,
     minimizer: [
@@ -62,7 +68,7 @@ module.exports = {
     rules: [
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
       {
-        test: /\.ts(x?)$/,
+        test: /\.(ts|tsx)?$/,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [{ loader: 'awesome-typescript-loader', options: { transpileOnly: true } }]
@@ -75,16 +81,16 @@ module.exports = {
         test: /\.(sa|sc|c)ss$/,
         use: [
           IS_PRODUCTION ? MiniCssExtractPlugin.loader : 'style-loader',
-          'css-loader',
+          { loader: 'css-loader', options: { url: false, sourceMap: true } },
           'postcss-loader',
-          'sass-loader'
+          { loader: 'sass-loader', options: { sourceMap: true } }
         ]
       }
     ]
   },
 
   plugins: [
-    ...(!IS_PRODUCTION ? [new CleanWebpackPlugin(['dist'])] : []),
+    new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       template: './src/client/index.html',
       title: 'Roomi',
@@ -101,7 +107,6 @@ module.exports = {
         minifyURLs: true
       }
     }),
-    new HardSourceWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: IS_PRODUCTION ? './static/css/main.[contenthash:8].css' : '[id].css',
       chunkFilename: IS_PRODUCTION ? './static/css/[id].[contenthash:8].css' : '[id].css'

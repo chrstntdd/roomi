@@ -1,7 +1,4 @@
 {
-  "awesomeTypescriptLoaderOptions": {
-    "useCache": true
-  },
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
