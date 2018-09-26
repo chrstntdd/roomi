@@ -14,7 +14,7 @@ interface PInput {
 
 interface SInput {
   isValid: boolean;
-  validationMsg: string | null;
+  validationMsg?: string[];
 }
 
 /**
@@ -29,13 +29,13 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
 
   state = {
     isValid: false,
-    validationMsg: null
+    validationMsg: []
   };
 
   handleBlur = e => {
     if (this.props.validator) {
       this.props.validator(this.props.value).matchWith({
-        Success: _ => this.setState({ isValid: true, validationMsg: '' }),
+        Success: _ => this.setState({ isValid: true, validationMsg: [] }),
         Failure: ({ value }) => this.setState({ isValid: false, validationMsg: value })
       });
     }

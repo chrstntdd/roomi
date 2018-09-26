@@ -4,7 +4,7 @@ import devtools from 'unistore/devtools';
 import fetches, { Fetches } from './fetches';
 import syncActions, { Sync } from './actions';
 
-export type RootState = {
+type RootState = {
   readonly email: string;
   readonly firstName: string;
   readonly friends: any[];
@@ -36,7 +36,7 @@ type GlobalStore = Store<RootState>;
  * @description
  * Provides a union of all `Msg`s that can be called within the global context
  */
-type Action = Sync | Fetches;
+type Action = Sync & Fetches;
 
 const store: GlobalStore =
   process.env.NODE_ENV === 'development'
@@ -48,4 +48,4 @@ const actions = (store: GlobalStore): Action => ({
   ...syncActions(store)
 });
 
-export { store, actions, initialState, GlobalStore };
+export { store, actions, initialState, RootState, GlobalStore, Action };

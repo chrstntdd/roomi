@@ -19,7 +19,7 @@ const getLocation = source => {
 };
 
 const createHistory = (source, options?: any) => {
-  let listeners = [];
+  let listeners: any[] = [];
   let location = getLocation(source);
   let transitioning = false;
   let resolveTransition = () => {};
@@ -82,7 +82,7 @@ const createHistory = (source, options?: any) => {
  */
 const createMemorySource = (initialPathname = '/') => {
   const stack = [{ pathname: initialPathname, search: '' }];
-  const states = [];
+  const states: any[] = [];
   let index = 0;
 
   return {

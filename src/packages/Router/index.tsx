@@ -136,7 +136,7 @@ interface PFocusHandlerImpl {
   style?: object;
 }
 interface SFocusHandlerImpl {
-  shouldFocus?: boolean;
+  shouldFocus?: boolean | null;
 }
 // don't focus on initial render
 let initialRender = true;
@@ -279,7 +279,7 @@ const Location = ({ children }) => (
 
 interface PLocationProvider {
   history?: any;
-  children?: (any) => JSX.Element;
+  children: (any) => React.ReactNode;
 }
 interface SLocationProvider {
   context: {
@@ -296,7 +296,7 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
     super(props);
   }
 
-  public static defaultProps: Partial<PLocationProvider> = {
+  public static defaultProps = {
     history: globalHistory
   };
 
@@ -305,14 +305,16 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
     refs: { unlisten: null }
   };
 
-  unmounted = null;
+  unmounted: boolean | null = null;
 
   componentDidMount() {
     this.state.refs.unlisten = this.props.history.listen(() => {
       Promise.resolve().then(() => {
-        if (!this.unmounted) {
-          this.setState(() => ({ context: this.getContext() }));
-        }
+        requestAnimationFrame(() => {
+          if (!this.unmounted) {
+            this.setState(() => ({ context: this.getContext() }));
+          }
+        });
       });
     });
   }

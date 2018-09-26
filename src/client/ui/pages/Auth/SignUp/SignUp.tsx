@@ -6,8 +6,7 @@ import { Link } from 'packages/Router';
 import Form from 'packages/unrender/Form';
 import Toggle from 'packages/unrender/Toggle';
 
-import { actions } from '@/state/store';
-import { SignUpMutation } from '@/state/fetches';
+import { actions, Action } from '@/state/store';
 
 import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 import Input from '@/ui/components/Input';
@@ -16,14 +15,12 @@ import { validateSignUpForm, isValidEmail, isValidPassword } from '@/ui/pages/Au
 
 import '../Auth.scss';
 
-interface PSignUp {
-  signUp: (validData: SignUpMutation) => void;
-}
+type PSignUp = {} & Action;
 
-interface SSignUp {
+type SSignUp = {
   validationMessages?: string;
   formItems: string[];
-}
+};
 
 export class SignUp extends Component<PSignUp, SSignUp> {
   constructor(props) {
@@ -35,6 +32,7 @@ export class SignUp extends Component<PSignUp, SSignUp> {
   };
 
   handleSubmit = async ({ username, email, password }) => {
+    // @ts-ignore first arg is supplied by unistore
     await this.props.signUp({ username, email, password });
   };
 
