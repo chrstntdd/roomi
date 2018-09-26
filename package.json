@@ -18,9 +18,13 @@
     "c:test-prod-sw": " rm -rf .fusebox/ && cross-env USE_SW=true NODE_ENV=production node fuse.js test-prod",
     "full:dev": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon,Mongo\" -c \"yellow.bold,cyan.bold,green.bold,green.underline\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\" \"mongod\"",
     "full:dev:win": "concurrently -k -p \"[{name}]\" -n \"Client,Server,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"cross-env NODE_ENV=development node fuse.js client-dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\"",
-    "precommit": "yarn run test-fast && lint-staged",
     "webpack": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --display none -p --config webpack.config.js",
     "webpack:dev": "./node_modules/.bin/webpack-dev-server --quiet --color -d --config webpack.config.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run test-fast && lint-staged"
+    }
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -29,7 +33,7 @@
     ]
   },
   "dependencies": {
-    "autoprefixer": "^9.0.1",
+    "autoprefixer": "^9.1.5",
     "bcrypt": "^3.0.1",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
@@ -46,7 +50,7 @@
     "html-minifier": "^3.5.20",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.17",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "node-sass": "^4.9.3",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
@@ -82,7 +86,7 @@
     "fuse-box-typechecker": "^2.10.0",
     "hard-source-webpack-plugin": "^0.12.0",
     "html-webpack-plugin": "^3.2.0",
-    "husky": "^1.0.0-rc.15",
+    "husky": "^1.0.0",
     "jest": "^23.6.0",
     "jest-dom": "^1.12.1",
     "jest-watch-typeahead": "^0.2.0",
