@@ -5,6 +5,7 @@ import { Trail, animated } from 'react-spring';
 import { Link } from 'packages/Router';
 import Form from 'packages/unrender/Form';
 import Toggle from 'packages/unrender/Toggle';
+import { SubmitButton } from '@/ui/components/SubmitButton';
 
 import { actions, Action } from '@/state/store';
 
@@ -131,16 +132,15 @@ export class SignUp extends Component<PSignUp, SSignUp> {
                       if (index === 4) {
                         return (
                           <animated.div style={sharedStyles}>
-                            <button
+                            <SubmitButton
                               disabled={validateSignUpForm(values).matchWith({
                                 Success: x => false,
                                 Failure: x => true
                               })}
                               className="searchButton"
-                              type="submit"
                             >
                               Sign Up
-                            </button>
+                            </SubmitButton>
                           </animated.div>
                         );
                       }

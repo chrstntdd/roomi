@@ -1,5 +1,10 @@
 const autoprefixer = require('autoprefixer');
+const tailwind = require('tailwindcss');
+const path = require('path');
 
 module.exports = {
-  plugins: [autoprefixer({ browsers: ['>0.25%'] })]
+  plugins: [
+    tailwind(path.join(__dirname, 'config/tailwind.js')),
+    autoprefixer({ browsers: ['>0.25%'] })
+  ]
 };

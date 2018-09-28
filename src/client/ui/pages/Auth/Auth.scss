@@ -29,6 +29,25 @@ main {
   --border-radius: 0.3rem;
 }
 
+.searchButton {
+  background: transparent;
+  padding: 10px 50px;
+  border: 2px solid var(--button-color);
+  border-radius: 3px;
+  margin: 1rem;
+  color: var(--button-color);
+  text-transform: uppercase;
+  font-size: 11px;
+  transition-property: background, color;
+  transition-duration: 0.5s;
+}
+
+.searchButton:hover {
+  color: white;
+  background: var(--button-color);
+  transition-property: background, color;
+}
+
 .form-container {
   display: flex;
   flex-direction: column;

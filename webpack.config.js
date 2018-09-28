@@ -1,5 +1,7 @@
 const path = require('path');
+const glob = require('glob');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const PurgecssPlugin = require('purgecss-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -81,7 +83,7 @@ module.exports = {
         test: /\.(sa|sc|c)ss$/,
         use: [
           IS_PRODUCTION ? MiniCssExtractPlugin.loader : 'style-loader',
-          { loader: 'css-loader', options: { url: false, sourceMap: true } },
+          'css-loader',
           'postcss-loader',
           { loader: 'sass-loader', options: { sourceMap: true } }
         ]
@@ -111,6 +113,13 @@ module.exports = {
       filename: IS_PRODUCTION ? './static/css/main.[contenthash:8].css' : '[id].css',
       chunkFilename: IS_PRODUCTION ? './static/css/[id].[contenthash:8].css' : '[id].css'
     }),
+    ...[
+      IS_PRODUCTION
+        ? new PurgecssPlugin({
+            paths: glob.sync(`src/client/**/*`, { nodir: true })
+          })
+        : []
+    ],
     new Stylish()
   ]
 };
