@@ -3,6 +3,7 @@ const glob = require('glob');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleBuddyWebpackPlugin = require('bundle-buddy-webpack-plugin');
@@ -11,6 +12,9 @@ const Stylish = require('webpack-stylish');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE;
+const USE_SERVICE_WORKER = process.env.USE_SW;
+
+const { sw } = require(path.join(__dirname, 'src/client/inline-sw'));
 
 module.exports = {
   entry: path.resolve(__dirname, 'src/client/index.tsx'),
@@ -114,6 +118,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: IS_PRODUCTION ? './static/css/main.[contenthash:8].css' : '[id].css',
       chunkFilename: IS_PRODUCTION ? './static/css/[id].[contenthash:8].css' : '[id].css'
+    }),
+    new InterpolateHtmlPlugin({
+      SW: IS_PRODUCTION && USE_SERVICE_WORKER ? sw : ''
     }),
     ...(IS_PRODUCTION
       ? [
