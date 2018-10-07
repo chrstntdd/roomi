@@ -31,7 +31,7 @@ describe('Cmd', () => {
         try {
           await Cmd.checkGraphQlResponse(mockRes);
         } catch (error) {
-          expect(error).toBeDefined;
+          expect(error).toBeDefined();
           expect(error.message).toEqual('There was an error');
         }
       });
@@ -45,7 +45,7 @@ describe('Cmd', () => {
 
     it('should include an Authorization header when specified', () => {
       window.sessionStorage.getItem.mockImplementationOnce(_ => 'random token');
-      const payload = Cmd.buildGraphQlPayload('', true);
+      const payload = Cmd.buildGraphQlPayload('Mutation', '', true);
 
       expect(window.sessionStorage.getItem).toHaveBeenCalledTimes(1);
       expect(payload.headers).toEqual(
@@ -104,6 +104,44 @@ describe('Cmd', () => {
        * Promise is being rejected on the fetch layer, so we wouldn't be able
        * to check the response of the request if it itself threw an error.
        */
+      expect(Cmd.checkGraphQlResponse).toHaveBeenCalledTimes(0);
+      expect(res).toEqual({ errors: 'error' });
+    });
+  });
+
+  describe('query', () => {
+    let check;
+    let build;
+
+    beforeEach(() => {
+      check = Cmd.checkGraphQlResponse;
+      build = Cmd.buildGraphQlPayload;
+
+      Cmd.checkGraphQlResponse = jest.fn(x => x);
+      Cmd.buildGraphQlPayload = jest.fn();
+    });
+
+    afterEach(() => {
+      Cmd.checkGraphQlResponse = check;
+      Cmd.buildGraphQlPayload = build;
+    });
+
+    it('should be able to make an authorized request', async () => {
+      fetch.mockImplementationOnce(() => Promise.resolve({ data: 'data' }));
+
+      const res = await Cmd.query('{ some { query { data } } }', true);
+
+      expect(Cmd.buildGraphQlPayload).toHaveBeenCalledTimes(1);
+      expect(Cmd.checkGraphQlResponse).toHaveBeenCalledTimes(1);
+      expect(res).toEqual({ data: 'data' });
+    });
+
+    it('should return the error if it catches one', async () => {
+      fetch.mockImplementationOnce(() => Promise.reject({ errors: 'error' }));
+
+      const res = await Cmd.query('{ some { query { data } } }', true);
+
+      expect(Cmd.buildGraphQlPayload).toHaveBeenCalledTimes(1);
       expect(Cmd.checkGraphQlResponse).toHaveBeenCalledTimes(0);
       expect(res).toEqual({ errors: 'error' });
     });

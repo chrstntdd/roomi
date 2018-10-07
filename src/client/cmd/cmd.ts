@@ -2,6 +2,8 @@ import fetch from 'unfetch';
 
 import { GRAPHQL_API_ENDPOINT } from '@/constants';
 
+type GraphQLRequestType = 'Query' | 'Mutation';
+
 export class Cmd {
   constructor() {
     this.graphQlEndpoint = GRAPHQL_API_ENDPOINT;
@@ -21,7 +23,7 @@ export class Cmd {
     if (response.ok && data) return Promise.resolve(data);
   }
 
-  private buildGraphQlPayload(gqlString: string, withAuth?: boolean) {
+  private buildGraphQlPayload(type: GraphQLRequestType, gqlString: string, withAuth?: boolean) {
     const token = withAuth && window.sessionStorage && sessionStorage.getItem('jwt');
 
     return {
@@ -31,7 +33,7 @@ export class Cmd {
         ...(token && { Authorization: `Bearer ${token}` }),
         ...this.headers
       },
-      body: JSON.stringify({ query: `mutation ${gqlString}` })
+      body: JSON.stringify({ query: `${type === 'Mutation' ? 'mutation' : ''} ${gqlString}` })
     };
   }
 
@@ -40,7 +42,20 @@ export class Cmd {
       const response = await fetch(
         this.graphQlEndpoint,
         // @ts-ignore
-        this.buildGraphQlPayload(gqlString, withAuth)
+        this.buildGraphQlPayload('Mutation', gqlString, withAuth)
+      );
+      return this.checkGraphQlResponse(response);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  public async query(gqlString: string, withAuth?: boolean) {
+    try {
+      const response = await fetch(
+        this.graphQlEndpoint,
+        // @ts-ignore
+        this.buildGraphQlPayload('Query', gqlString, withAuth)
       );
       return this.checkGraphQlResponse(response);
     } catch (error) {
