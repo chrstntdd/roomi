@@ -5,10 +5,12 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const BundleBuddyWebpackPlugin = require('bundle-buddy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const Stylish = require('webpack-stylish');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE;
 
 module.exports = {
   entry: path.resolve(__dirname, 'src/client/index.tsx'),
@@ -120,6 +122,7 @@ module.exports = {
           })
         ]
       : []),
-    new Stylish()
+    new Stylish(),
+    ...(ANALYZE_BUNDLE ? [new BundleBuddyWebpackPlugin()] : [])
   ]
 };
