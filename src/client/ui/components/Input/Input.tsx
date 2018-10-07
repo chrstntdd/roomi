@@ -63,7 +63,7 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
           onBlur={this.handleBlur}
           {...domProps}
         />
-        {<label htmlFor={id}>{label}</label>}
+        <label htmlFor={id}>{label}</label>
         {!isValid &&
           validationMsg && (
             <div className="errors">
