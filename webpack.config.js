@@ -113,13 +113,13 @@ module.exports = {
       filename: IS_PRODUCTION ? './static/css/main.[contenthash:8].css' : '[id].css',
       chunkFilename: IS_PRODUCTION ? './static/css/[id].[contenthash:8].css' : '[id].css'
     }),
-    ...[
-      IS_PRODUCTION
-        ? new PurgecssPlugin({
+    ...(IS_PRODUCTION
+      ? [
+          new PurgecssPlugin({
             paths: glob.sync(`src/client/**/*`, { nodir: true })
           })
-        : []
-    ],
+        ]
+      : []),
     new Stylish()
   ]
 };
