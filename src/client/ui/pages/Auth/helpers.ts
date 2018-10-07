@@ -11,7 +11,7 @@ export const validEmail = (value: string) =>
     ? Success(value)
     : Failure(['Please enter a valid email']);
 
-export const notEmpty = (field, value) =>
+export const notEmpty = field => value =>
   value && value.trim()
     ? Success(value)
     : Failure([`${capitalizeFirstChar(field)} can't be empty`]);
@@ -23,15 +23,24 @@ export const minLength = (field: string, min: number, value: string) =>
 
 export const isValidEmail = emailValue =>
   Success()
-    .concat(notEmpty('email', emailValue))
+    .concat(notEmpty('email')(emailValue))
     .concat(validEmail(emailValue))
     .map(_ => emailValue);
 
 export const isValidPassword = passwordValue =>
   Success()
-    .concat(notEmpty('password', passwordValue))
+    .concat(notEmpty('password')(passwordValue))
     .concat(minLength('password', 6, passwordValue))
     .map(_ => passwordValue);
+
+export const validateSignInForm = formValues =>
+  /** Not validating the password since whatever the user
+   * chose has already passed the password validator
+   */
+  Success()
+    .concat(notEmpty('password')(formValues.password))
+    .concat(notEmpty('email')(formValues.username))
+    .map(_ => formValues);
 
 export const validateSignUpForm = formValues =>
   Success()
