@@ -107,7 +107,7 @@ type ListItem implements Node {
 type Query {
   viwer: User
   node(id: ID!): Node
-  user(_id: String!): User
+  user(username: String!, id: ID): User
   users: [User]
   getList(id: ID!): List
 

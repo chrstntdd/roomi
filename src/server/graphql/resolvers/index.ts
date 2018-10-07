@@ -19,7 +19,8 @@ export default {
     lists: ListResolvers.lists,
 
     /* user queries */
-    users: UserResolvers.getAllUsers
+    users: UserResolvers.getAllUsers,
+    user: UserResolvers.getUser
   },
   Mutation: {
     signIn: UserResolvers.signIn,

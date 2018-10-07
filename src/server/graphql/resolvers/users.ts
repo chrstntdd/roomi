@@ -47,8 +47,8 @@ export default {
     }
   },
 
-  getUser: async (_, { id }) => {
-    const user = await User.findById(id);
+  getUser: async (_, { id, username }) => {
+    const user = await User.findOne({ id, username });
     if (!user) {
       throw new Error("That user doesn't exist, boi");
     } else {

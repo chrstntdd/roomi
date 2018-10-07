@@ -47,6 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:4444');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
   res.header(
     'Access-Control-Allow-Headers',
@@ -106,7 +107,7 @@ export interface GraphQlContext {
 app.use(
   '/graphql',
   cors({
-    origin: 'http://localhost:4444'
+    origin: 'http://localhost:8080'
   }),
   graphql((request: Request, response, graphQlParams) => {
     return {
