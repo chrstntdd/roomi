@@ -46,6 +46,7 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
     const { isValid, validationMsg } = this.state;
 
     const hasContent = value !== '';
+    const hasValidationMsgs = validationMsg && validationMsg.length;
 
     return (
       <div className="input-group">
@@ -54,7 +55,7 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
           className={classNames([
             className,
             hasContent && 'has-content',
-            validationMsg && 'invalid'
+            hasValidationMsgs && 'invalid'
           ])}
           autoComplete="off"
           id={id}
