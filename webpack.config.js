@@ -68,7 +68,11 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js', '.json'],
     alias: {
       '@': path.resolve(__dirname, 'src/client/'),
-      packages: path.resolve(__dirname, 'src/packages/')
+      packages: path.resolve(__dirname, 'src/packages/'),
+      'react': path.resolve(__dirname, 'vendor/react'),
+      'scheduler': path.resolve(__dirname, 'vendor/scheduler'),
+      'react-dom': path.resolve(__dirname, 'vendor/react-dom'),
+      'react-cache': path.resolve(__dirname, 'vendor/react-cache'),
     }
   },
 
@@ -79,7 +83,7 @@ module.exports = {
         test: /\.(ts|tsx)?$/,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-        use: ['awesome-typescript-loader']
+        use: [{ loader: 'awesome-typescript-loader', options: { transpileOnly: true } }]
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'sourceyarn -map-loader'.

@@ -95,8 +95,9 @@ export class SignIn extends Component<PSignIn, SSignIn> {
   }
 }
 
-export default connect(
-  'jwt',
-  actions
-  // @ts-ignore
-)(SignIn);
+// export default connect(
+//   'jwt',
+//   actions
+//   // @ts-ignore
+// )(SignIn);
+export default SignIn;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, lazy, Placeholder } from 'react';
 import Loadable from 'react-loadable';
 import { connect } from 'unistore/react';
 
@@ -14,13 +14,11 @@ function Loading() {
   return <div>Loading...</div>;
 }
 
-const shared = { loading: Loading };
-
-const Home = Loadable({ loader: () => import('@/ui/pages/Home'), ...shared });
-const Dashboard = Loadable({ loader: () => import('@/ui/pages/Dashboard'), ...shared });
-const NotFound = Loadable({ loader: () => import('@/ui/pages/NotFound'), ...shared });
-const SignIn = Loadable({ loader: () => import('@/ui/pages/Auth/SignIn'), ...shared });
-const SignUp = Loadable({ loader: () => import('@/ui/pages/Auth/SignUp'), ...shared });
+const Home = lazy(() => import('@/ui/pages/Home'));
+const Dashboard = lazy(() => import('@/ui/pages/Dashboard'));
+const NotFound = lazy(() => import('@/ui/pages/NotFound'));
+const SignIn = lazy(() => import('@/ui/pages/Auth/SignIn'));
+const SignUp = lazy(() => import('@/ui/pages/Auth/SignUp'));
 
 // const TransitionRouter = props => (
 //   <Location>
@@ -106,22 +104,25 @@ class App extends Component<PApp, SApp> {
 
   render() {
     return (
-      <Page>
-        <Nav />
-        <Router>
-          <Home path="/" />
-          <Dashboard path="/dashboard" />
-          <SignIn path="/sign-in" />
-          <SignUp path="/sign-up" />
-          <NotFound default />
-        </Router>
-      </Page>
+      <Placeholder delayMs={1} fallback={<Loading />}>
+        <Page>
+          <Nav />
+          <Router>
+            <Home path="/" />
+            <Dashboard path="/dashboard" />
+            <SignIn path="/sign-in" />
+            <SignUp path="/sign-up" />
+            <NotFound default />
+          </Router>
+        </Page>
+      </Placeholder>
     );
   }
 }
 
-export default connect(
-  '',
-  actions
-  // @ts-ignore
-)(App);
+// export default connect(
+//   '',
+//   actions
+//   // @ts-ignore
+// )(App);
+export default App;
