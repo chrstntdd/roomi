@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'unistore/react';
-import { Trail, animated } from 'react-spring';
 
 import { Link } from 'packages/Router';
 import Form from 'packages/unrender/Form';
@@ -8,11 +7,17 @@ import Toggle from 'packages/unrender/Toggle';
 import { SubmitButton } from '@/ui/components/SubmitButton';
 
 import { actions, Action } from '@/state/store';
+import { isUsernameAvailable } from '@/state/fetches';
 
 import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 import Input from '@/ui/components/Input';
 
-import { validateSignUpForm, isValidEmail, isValidPassword } from '@/ui/pages/Auth/helpers';
+import {
+  validateSignUpForm,
+  isValidEmail,
+  isValidPassword,
+  notEmpty
+} from '@/ui/pages/Auth/helpers';
 
 import '../Auth.scss';
 
@@ -28,31 +33,22 @@ export class SignUp extends Component<PSignUp, SSignUp> {
     super(props);
   }
 
-  state = {
-    formItems: ['legend', 'email', 'username', 'password', 'button']
-  };
-
   handleSubmit = async ({ username, email, password }) => {
     // @ts-ignore first arg is supplied by unistore
     await this.props.signUp({ username, email, password });
   };
-
-  handleFailedValidation(err: string) {
-    this.setState({ validationMessages: err });
-  }
 
   emailInputId = 'email';
   usernameInputId = 'username';
   passwordInputId = 'password';
 
   render() {
-    const { formItems } = this.state;
-
     return (
       <main>
         <div className="kinda-center">
           <Form>
             {({ input, values }) => (
+              // @ts-ignore
               <form onSubmit={e => e.preventDefault() || this.handleSubmit(values)}>
                 <div className="form-container">
                   <div className="auth-toggle">
@@ -64,90 +60,46 @@ export class SignUp extends Component<PSignUp, SSignUp> {
                     </Link>
                   </div>
 
-                  <Trail
-                    from={{ opacity: 0, y: 100 }}
-                    to={{ opacity: 100, y: 0 }}
-                    config={{ tension: 160, friction: 10 }}
-                    native
-                    keys={formItems}
-                  >
-                    {formItems.map((item, index) => ({ y, opacity }) => {
-                      const sharedStyles = {
-                        opacity,
-                        transform: y.interpolate(y => `translate3d(0,${y}%,0)`)
-                      };
-
-                      if (index === 0) {
-                        return (
-                          <animated.div style={sharedStyles}>
-                            <legend className="legend">Sign up for an account</legend>
-                          </animated.div>
-                        );
-                      }
-                      if (index === 1) {
-                        return (
-                          <animated.div style={sharedStyles}>
-                            <Input
-                              label="Email"
-                              validator={isValidEmail}
-                              id={this.emailInputId}
-                              {...input(this.emailInputId).connect}
-                            />
-                          </animated.div>
-                        );
-                      }
-                      if (index === 2) {
-                        return (
-                          <animated.div style={sharedStyles}>
-                            <Input
-                              label="Username"
-                              id={this.usernameInputId}
-                              {...input(this.usernameInputId).connect}
-                            />
-                          </animated.div>
-                        );
-                      }
-                      if (index === 3) {
-                        return (
-                          <animated.div style={sharedStyles}>
-                            <Toggle initial={true}>
-                              {({ on, toggle }) => (
-                                <div className="password-input-container">
-                                  <Input
-                                    label="Password"
-                                    validator={isValidPassword}
-                                    id={this.passwordInputId}
-                                    type={on ? 'password' : 'text'}
-                                    {...input(this.passwordInputId).connect}
-                                  />
-                                  <button className="visibility-toggle" onClick={toggle}>
-                                    {on ? <ShowPasswordIcon /> : <HidePasswordIcon />}
-                                  </button>
-                                </div>
-                              )}
-                            </Toggle>
-                          </animated.div>
-                        );
-                      }
-                      if (index === 4) {
-                        return (
-                          <animated.div style={sharedStyles}>
-                            <SubmitButton
-                              disabled={validateSignUpForm(values).matchWith({
-                                Success: x => false,
-                                Failure: x => true
-                              })}
-                              className="searchButton"
-                            >
-                              Sign Up
-                            </SubmitButton>
-                          </animated.div>
-                        );
-                      }
-
-                      return null;
+                  <legend className="legend">Sign up for an account</legend>
+                  <Input
+                    label="Email"
+                    validator={isValidEmail}
+                    id={this.emailInputId}
+                    {...input(this.emailInputId).connect}
+                  />
+                  <Input
+                    label="Username"
+                    validator={notEmpty('username')}
+                    asyncValidator={() => [isUsernameAvailable(values.username || '')]}
+                    id={this.usernameInputId}
+                    {...input(this.usernameInputId).connect}
+                  />
+                  <Toggle initial={true}>
+                    {({ on, toggle }) => (
+                      <div className="password-input-container">
+                        <Input
+                          label="Password"
+                          validator={isValidPassword}
+                          id={this.passwordInputId}
+                          type={on ? 'password' : 'text'}
+                          {...input(this.passwordInputId).connect}
+                        />
+                        <button className="visibility-toggle" onClick={toggle}>
+                          {on ? <ShowPasswordIcon /> : <HidePasswordIcon />}
+                        </button>
+                      </div>
+                    )}
+                  </Toggle>
+                  <SubmitButton
+                    data-testid="signUp-button"
+                    disabled={validateSignUpForm(values).matchWith({
+                      Success: _ => false,
+                      Failure: _ => true
                     })}
-                  </Trail>
+                    className="searchButton"
+                  >
+                    Sign Up
+                  </SubmitButton>
                 </div>
               </form>
             )}

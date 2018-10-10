@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
 
+import { AsyncValidator } from '@/state/fetches';
+
 import { classNames } from '@/util';
 
 interface PInput {
@@ -7,6 +9,7 @@ interface PInput {
   label: string;
   value: string;
   validator: any;
+  asyncValidator: () => Promise<AsyncValidator>[];
   validationMsg?: string;
   isValid?: boolean;
   onChange?: (e) => void;
@@ -32,17 +35,44 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
     validationMsg: []
   };
 
-  handleBlur = e => {
+  handleBlur = async e => {
+    const val = this.props.value.trim();
+
     if (this.props.validator) {
-      this.props.validator(this.props.value).matchWith({
+      this.props.validator(val).matchWith({
         Success: _ => this.setState({ isValid: true, validationMsg: [] }),
         Failure: ({ value }) => this.setState({ isValid: false, validationMsg: value })
       });
     }
+
+    if (this.props.asyncValidator && val && val.length) {
+      const res = await Promise.all(this.props.asyncValidator());
+
+      if (res.every(v => v.isValid)) {
+        this.setState({ isValid: true });
+      } else {
+        this.setState(prevState => ({
+          isValid: false,
+          validationMsg: prevState.validationMsg
+            ? prevState.validationMsg.concat(res[0].msg)
+            : [res[0].msg]
+        }));
+      }
+    }
   };
 
   render() {
-    const { id, label, onChange, value, className, type, validator, ...domProps } = this.props;
+    const {
+      id,
+      label,
+      onChange,
+      value,
+      className,
+      type,
+      validator,
+      asyncValidator,
+      ...domProps
+    } = this.props;
     const { isValid, validationMsg } = this.state;
 
     const hasContent = value !== '';
