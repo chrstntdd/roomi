@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import ReactDOM from 'react-dom';
 
 /* CLONE/FORK OF https://github.com/reach/router */
 
@@ -45,6 +44,10 @@ interface PRouterImpl {
 interface SRouterImpl {}
 
 class RouterImpl extends React.PureComponent<PRouterImpl, SRouterImpl> {
+  constructor(props) {
+    super(props);
+  }
+
   static defaultProps = {
     primary: true
   };
@@ -92,9 +95,9 @@ class RouterImpl extends React.PureComponent<PRouterImpl, SRouterImpl> {
         )
       );
 
-      // using 'div' for < 16.3 support
+      /* using 'div' for < 16.3 support */
       const FocusWrapper = primary ? FocusHandler : component;
-      // don't pass any props to 'div'
+      /* don't pass any props to 'div' */
       const wrapperProps = primary ? { uri, location, component, ...domProps } : domProps;
 
       return (
@@ -124,10 +127,6 @@ const FocusHandler = ({ uri, location, component, ...domProps }) => (
   </FocusContext.Consumer>
 );
 
-// don't focus on initial render
-let initialRender = true;
-let focusHandlerCount = 0;
-
 interface PFocusHandlerImpl {
   component: any;
   requestFocus: (any) => void;
@@ -137,10 +136,17 @@ interface PFocusHandlerImpl {
   style?: object;
 }
 interface SFocusHandlerImpl {
-  shouldFocus?: boolean;
+  shouldFocus?: boolean | null;
 }
+// don't focus on initial render
+let initialRender = true;
+let focusHandlerCount = 0;
 
 class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerImpl> {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     shouldFocus: null
   };
@@ -175,15 +181,11 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
 
   componentWillUnmount() {
     focusHandlerCount--;
-    if (focusHandlerCount === 0) {
-      initialRender = true;
-    }
+    focusHandlerCount === 0 && (initialRender = true);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.location !== this.props.location && this.state.shouldFocus) {
-      this.focus();
-    }
+  componentDidUpdate(prevProps) {
+    prevProps.location !== this.props.location && this.state.shouldFocus && this.focus();
   }
 
   focus() {
@@ -196,21 +198,15 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
 
     let { requestFocus } = this.props;
 
-    if (requestFocus) {
-      requestFocus(this.node);
-    } else {
-      if (initialRender) {
-        initialRender = false;
-      } else {
-        this.node.focus();
-      }
-    }
+    requestFocus
+      ? requestFocus(this.node)
+      : initialRender
+        ? (initialRender = false)
+        : !this.node.contains(document.activeElement) && this.node.focus();
   }
 
   requestFocus = node => {
-    if (!this.state.shouldFocus) {
-      node.focus();
-    }
+    !this.state.shouldFocus && node.focus();
   };
 
   render() {
@@ -283,7 +279,7 @@ const Location = ({ children }) => (
 
 interface PLocationProvider {
   history?: any;
-  children?: (any) => JSX.Element;
+  children: (any) => React.ReactNode;
 }
 interface SLocationProvider {
   context: {
@@ -296,7 +292,11 @@ interface SLocationProvider {
 }
 
 class LocationProvider extends React.Component<PLocationProvider, SLocationProvider> {
-  public static defaultProps: Partial<PLocationProvider> = {
+  constructor(props) {
+    super(props);
+  }
+
+  public static defaultProps = {
     history: globalHistory
   };
 
@@ -305,12 +305,12 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
     refs: { unlisten: null }
   };
 
-  unmounted = null;
+  unmounted: boolean | null = null;
 
   componentDidMount() {
     this.state.refs.unlisten = this.props.history.listen(() => {
       Promise.resolve().then(() => {
-        ReactDOM.unstable_deferredUpdates(() => {
+        requestAnimationFrame(() => {
           if (!this.unmounted) {
             this.setState(() => ({ context: this.getContext() }));
           }
@@ -390,7 +390,11 @@ const ServerLocation = ({ url, children }) => (
  * Redirect START ///////////////////////////////////////////////
  */
 
-function RedirectRequest(uri) {
+interface IRedirectRequest {
+  uri: string;
+}
+
+function RedirectRequest(this: IRedirectRequest, uri: string) {
   this.uri = uri;
 }
 
@@ -411,6 +415,9 @@ interface PRedirectImpl {
 interface SRedirectImpl {}
 
 class RedirectImpl extends React.Component<PRedirectImpl, SRedirectImpl> {
+  constructor(props) {
+    super(props);
+  }
   // Support React < 16 with this hook
   componentDidMount() {
     let {
@@ -434,45 +441,54 @@ const Redirect = props => (
   <Location>{locationContext => <RedirectImpl {...locationContext} {...props} />}</Location>
 );
 
-/**
- * Redirect END /////////////////////////////////////////////////////////////////
- */
+interface LinkPropGetter {
+  isCurrent: boolean;
+  isPartiallyCurrent: boolean;
+  href: string;
+  location: any;
+}
 
-/**
- * Link START //////////////////////////////////////////////////////////////////
- */
+interface LinkProps {
+  to: string;
+  innerRef?: any;
+  state?: any;
+  replace?: () => any;
+  getProps?: (x: LinkPropGetter) => any;
+}
 
-const Link = forwardRef(({ innerRef, ...props }, ref) => (
-  <BaseContext.Consumer>
-    {({ basepath, baseuri }) => (
-      <Location>
-        {({ location, navigate }) => {
-          const { to, state, replace, getProps = () => {}, ...anchorProps } = props;
-          const href = resolve(to, baseuri);
-          const isCurrent = location.pathname === href;
-          const isPartiallyCurrent = startsWith(location.pathname, href);
+const Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> = forwardRef(
+  ({ innerRef, ...props }, ref) => (
+    <BaseContext.Consumer>
+      {({ basepath, baseuri }) => (
+        <Location>
+          {({ location, navigate }) => {
+            const { to, state, replace, getProps = () => {}, ...anchorProps } = props;
+            const href = resolve(to, baseuri);
+            const isCurrent = location.pathname === href;
+            const isPartiallyCurrent = startsWith(location.pathname, href);
 
-          return (
-            <a
-              ref={ref || innerRef}
-              aria-current={isCurrent ? 'page' : undefined}
-              {...anchorProps}
-              {...getProps({ isCurrent, isPartiallyCurrent, href, location })}
-              href={href}
-              onClick={event => {
-                if (anchorProps.onClick) anchorProps.onClick(event);
-                if (shouldNavigate(event)) {
-                  event.preventDefault();
-                  navigate(href, { state, replace });
-                }
-              }}
-            />
-          );
-        }}
-      </Location>
-    )}
-  </BaseContext.Consumer>
-));
+            return (
+              <a
+                ref={ref || innerRef}
+                aria-current={isCurrent ? 'page' : undefined}
+                {...anchorProps}
+                {...getProps({ isCurrent, isPartiallyCurrent, href, location })}
+                href={href}
+                onClick={event => {
+                  if (anchorProps.onClick) anchorProps.onClick(event);
+                  if (shouldNavigate(event)) {
+                    event.preventDefault();
+                    navigate(href, { state, replace });
+                  }
+                }}
+              />
+            );
+          }}
+        </Location>
+      )}
+    </BaseContext.Consumer>
+  )
+);
 
 /**
  * Link END //////////////////////////////////////////////////////////////////
@@ -510,5 +526,6 @@ export {
   navigate,
   BaseContext,
   Redirect,
-  Link
+  Link,
+  globalHistory
 };

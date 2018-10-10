@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/client/*"],
-      "packages/*": ["src/packages/*"]
-    },
     "allowJs": true,
-    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "checkJs": true,
     "declaration": false,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react",
-    "lib": ["dom", "esnext"],
-    "module": "commonjs",
-    "moduleResolution": "node",
     "importHelpers": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "module": "esnext",
+    "moduleResolution": "node",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
@@ -23,16 +24,28 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "outDir": "dist/",
+    "paths": {
+      "@/*": [
+        "src/client/*"
+      ],
+      "packages/*": [
+        "src/packages/*"
+      ]
+    },
+    "pretty": true,
     "removeComments": true,
     "sourceMap": true,
     "target": "es6",
-    "typeRoots": ["./node_modules/@types"],
-    /* Debugging Options */
-    "listEmittedFiles": false /* Print names of generated files part of the compilation. */,
-    "listFiles": false /* Print names of files part of the compilation. */,
-    "pretty": true /* Stylize errors and messages using color and context. */,
-    "traceResolution": false /* Report module resolution log messages. */
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules/**/*",
+    "src/**/*.spec.*"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }

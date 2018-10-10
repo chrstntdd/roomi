@@ -7,6 +7,7 @@ const {
   WebIndexPlugin
 } = require('fuse-box');
 const { src, task, context, tsc, exec } = require('fuse-box/sparky');
+const { TypeChecker } = require('fuse-box-typechecker');
 const { join } = require('path');
 const express = require('express');
 const autoprefixer = require('autoprefixer');
@@ -21,6 +22,7 @@ const CLIENT_OUT = join(__dirname, 'build/client');
 const SERVER_OUT = join(__dirname, 'build/server');
 const TEMPLATE = join(__dirname, 'src/client/index.html');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const USE_SERVICE_WORKER = process.env.USE_SW;
 
 const { sw } = require(join(__dirname, 'src/client/inline-sw'));
 
@@ -30,6 +32,10 @@ context(
       return FuseBox.init({
         homeDir: 'src',
         output: `${CLIENT_OUT}/$name.js`,
+        log: {
+          enabled: IS_PRODUCTION,
+          showBundledFiles: IS_PRODUCTION
+        },
         target: 'browser',
         sourceMaps: true,
         cache: !IS_PRODUCTION,
@@ -57,7 +63,7 @@ context(
             pre: 'load',
             engine: 'handlebars',
             locals: {
-              service_worker: IS_PRODUCTION ? sw : ' '
+              service_worker: IS_PRODUCTION && USE_SERVICE_WORKER ? sw : ' '
             }
           }),
           IS_PRODUCTION &&
@@ -73,7 +79,7 @@ context(
 
     async compileServer() {
       await tsc('src/server', {
-        target: 'esnext',
+        target: 'ESNext',
         outDir: SERVER_OUT,
         sourceMap: true,
         ...(IS_PRODUCTION ? {} : { watch: true })
@@ -92,7 +98,16 @@ context(
   }
 );
 
-task('dev-build', async context => {
+const typeguard = TypeChecker({
+  tsConfig: './tsconfig.json',
+  basePath: './',
+  name: '',
+  tsConfigOverride: {
+    include: ['src/client/**/*.ts', 'src/client/**/*.tsx']
+  }
+});
+
+task('client-dev-build', async context => {
   const fuse = context.build();
 
   context.startDevServer(fuse);
@@ -103,16 +118,20 @@ task('dev-build', async context => {
     .watch()
     .instructions('> client/index.tsx');
 
+  typeguard.runWatch('./src');
+
   await fuse.run();
 });
 
-task('prod-build', async context => {
+task('client-prod-build', async context => {
   const fuse = context.build();
 
   fuse
     .bundle('app')
     .splitConfig({ dest: '/bundles' })
     .instructions('!> client/index.tsx');
+
+  typeguard.runAsync();
 
   context.testProd && context.startDevServer(fuse);
 
@@ -149,35 +168,53 @@ task('minify-html', () => {
 });
 
 task('gen-sw', async () => {
-  try {
-    const stats = await workbox.injectManifest({
-      globDirectory: CLIENT_OUT,
-      globPatterns: ['**/*.{html,js,css,png,svg,jpg,jpeg,gif}'],
-      globIgnores: ['**/sw.js'],
-      swSrc: join('src/client', 'sw.js'),
-      swDest: join(CLIENT_OUT, 'sw.js')
-    });
+  if (USE_SERVICE_WORKER) {
+    try {
+      const stats = await workbox.injectManifest({
+        globDirectory: CLIENT_OUT,
+        globPatterns: ['**/*.{html,js,css,png,svg,jpg,jpeg,gif}'],
+        globIgnores: ['**/sw.js'],
+        swSrc: join('src/client', 'sw.js'),
+        swDest: join(CLIENT_OUT, 'sw.js')
+      });
 
-    info(
-      ` ⚙️ Service worker generated 🛠 \n ${
-        stats.count
-      } files will be precached, totaling ${stats.size / 1000000.0} MB.`
-    );
-  } catch (error) {
-    info('  😒 There was an error generating the service worker 😒', error);
+      info(
+        ` ⚙️ Service worker generated 🛠 \n ${
+          stats.count
+        } files will be precached, totaling ${stats.size / 1000000.0} MB.`
+      );
+    } catch (error) {
+      info('  😒 There was an error generating the service worker 😒', error);
+    }
   }
 });
 
 /* MAIN BUILD TASK CHAINS  */
-task('dev', ['client-clean', 'dev-build'], () => info('GET TO WORK'));
-task('prod', ['clean', 'prod-build', 'minify-html', 'gen-sw'], () => info('READY FOR PROD'));
 
-task('server-dev', ['server-clean', 'copy-schema', 'server-build'], _ =>
-  info('The back end code has been compiled. GET TO WORK!')
+// Compile client code for development
+task('client-dev', ['client-clean', 'client-dev-build'], _ =>
+  info('Client code compiled. Get to building  🚧  🛠  💰  🏗  ')
 );
 
+// Compile client code for production
+task('client-prod', ['client-clean', 'client-prod-build', 'minify-html', 'gen-sw'], _ =>
+  info('🚀  Client code ready for production, lets secure this bag 🚀')
+);
+
+// Compile server
+task('server-dev', ['server-clean', 'copy-schema', 'server-build'], _ =>
+  info('Back end code compiled successfully!')
+);
+
+// Compile server for production
+// (Identical to the dev build, but this task has its NODE_ENV set to prod)
+task('server-prod', ['server-clean', 'copy-schema', 'server-build'], _ =>
+  info('Back end code compiled successfully!')
+);
+
+// Test production client build with the express dev server provided by fusebox
 task('test-prod', async context => {
   context.testProd = true;
-  await exec('clean', 'prod-build', 'minify-html', 'gen-sw');
+  await exec('client-clean', 'client-prod');
   info('Lets test prod');
 });

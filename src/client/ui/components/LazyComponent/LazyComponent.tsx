@@ -1,5 +1,10 @@
 import React from 'react';
 
+interface PLazyComponent {
+  path?: string;
+  default?: boolean;
+}
+
 /**
  * @description To return a new React component, ready to be instantiated.
  * Note the closure here protecting Component, and providing a unique
@@ -8,7 +13,11 @@ import React from 'react';
 export const generateLazyComponent = loader => {
   let Component = null;
 
-  return class AsyncRouteComponent extends React.Component {
+  return class AsyncRouteComponent extends React.Component<PLazyComponent, {}> {
+    constructor(props) {
+      super(props);
+    }
+
     static displayName = 'AsyncComponent';
 
     state = { Component };

@@ -19,7 +19,7 @@ const getLocation = source => {
 };
 
 const createHistory = (source, options?: any) => {
-  let listeners = [];
+  let listeners: any[] = [];
   let location = getLocation(source);
   let transitioning = false;
   let resolveTransition = () => {};
@@ -43,7 +43,7 @@ const createHistory = (source, options?: any) => {
 
       let popstateListener = () => {
         location = getLocation(source);
-        listener();
+        listener({ location, action: 'POP' });
       };
 
       source.addEventListener('popstate', popstateListener);
@@ -54,7 +54,7 @@ const createHistory = (source, options?: any) => {
       };
     },
 
-    navigate(to, { state, replace = false } = {}) {
+    navigate(to, { state = {}, replace = false } = {}) {
       state = { ...state, key: Date.now().toString() };
 
       // try...catch iOS Safari limits to 100 pushState calls
@@ -71,7 +71,7 @@ const createHistory = (source, options?: any) => {
       location = getLocation(source);
       transitioning = true;
       const transition = new Promise(res => (resolveTransition = res));
-      listeners.forEach(fn => fn());
+      listeners.forEach(listener => listener({ location, action: 'PUSH' }));
       return transition;
     }
   };
@@ -82,7 +82,7 @@ const createHistory = (source, options?: any) => {
  */
 const createMemorySource = (initialPathname = '/') => {
   const stack = [{ pathname: initialPathname, search: '' }];
-  const states = [];
+  const states: any[] = [];
   let index = 0;
 
   return {

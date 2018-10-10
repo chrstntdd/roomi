@@ -44,8 +44,8 @@ test('child input can connect to the form state', () => {
   );
 
   const input = getByPlaceholderText('username');
-  input.value = 'something else';
-  fireEvent.change(input);
+
+  fireEvent.change(input, { target: { value: 'something else' } });
 
   expect(getByValue('something else')).toBeInTheDocument();
 });
