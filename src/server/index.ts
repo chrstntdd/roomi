@@ -70,7 +70,7 @@ const schema = makeExecutableSchema({
   }
 });
 
-const mongoClient = mongoose.connect(
+mongoose.connect(
   DATABASE_URL,
   { useNewUrlParser: true }
 );

@@ -29,7 +29,7 @@ export default {
       throw new ApiError('CLIENT', {
         message: 'There is no user with that username'
       });
-    } else if (!(await user.checkPassword(password))) {
+    } else if (!(await user.isPasswordValid(password))) {
       throw new ApiError('CLIENT', {
         message: 'Incorrect username or password'
       });

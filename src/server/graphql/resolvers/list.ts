@@ -2,7 +2,6 @@ import { Types, Query } from 'mongoose';
 
 import { GraphQlContext } from '../../';
 import { listModel as List, itemModel as Item, userModel as User } from '../../models';
-import { ApiError } from '../../config/error';
 
 import { verifyJwt } from '../../utils';
 

@@ -35,6 +35,7 @@ export class SignIn extends Component<PSignIn, SSignIn> {
         <div className="kinda-center">
           <Form>
             {({ input, values }) => (
+              // @ts-ignore
               <form onSubmit={e => e.preventDefault() || this.handleSubmit(values)}>
                 <div className="form-container">
                   <div className="auth-toggle">

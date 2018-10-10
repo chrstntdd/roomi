@@ -5,13 +5,14 @@ import { signToken } from '../utils';
 
 const SALT_FACTOR = 13;
 
-const hashPassword = async (password: string): Promise<string> => {
+const hashPassword = async (password: string): Promise<string | null> => {
   try {
     !password && null;
     return await hash(password, SALT_FACTOR);
   } catch (err) {
     console.log(err);
   }
+  return null;
 };
 
 type ItemPriority = 'LOW' | 'MEDIUM' | 'HIGH';
@@ -83,14 +84,14 @@ type UserModel = Document & {
   lists: [ListModel];
   accountCreated: Date;
   roommates: [UserModel];
-  checkPassword: (password: string) => Promise<Boolean>;
+  isPasswordValid: (password: string) => Promise<Boolean>;
   createToken: (userId: string) => string;
 };
 
 const userSchema = new Schema(
   {
     lists: [{ type: Schema.Types.ObjectId, ref: 'List' }],
-    roommates: [this],
+    roommates: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     email: { type: String, required: true, unique: true, trim: true },
     firstName: { type: String, trim: true },
     lastName: { type: String, trim: true },
@@ -114,12 +115,13 @@ userSchema.pre('save', async function(this: UserModel, next) {
   }
 });
 
-userSchema.methods.checkPassword = async function(password: string): Promise<Boolean> {
+userSchema.methods.isPasswordValid = async function(password: string): Promise<Boolean> {
   try {
     return await compare(password, this.password);
   } catch (error) {
     console.log(error);
   }
+  return false;
 };
 
 userSchema.methods.createToken = signToken;

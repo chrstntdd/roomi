@@ -79,7 +79,7 @@ module.exports = {
         test: /\.(ts|tsx)?$/,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-        use: [{ loader: 'awesome-typescript-loader', options: { transpileOnly: true } }]
+        use: ['awesome-typescript-loader']
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'sourceyarn -map-loader'.

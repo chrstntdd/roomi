@@ -1,7 +1,7 @@
 import React from 'react';
 
 import State from 'packages/unrender/State';
-import { set, composeOnChange } from 'packages/unrender/helpers';
+import { composeOnChange } from 'packages/unrender/helpers';
 
 interface PInput {
   initial?: boolean;
