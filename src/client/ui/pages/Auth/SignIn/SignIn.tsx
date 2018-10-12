@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'unistore/react';
 
-import { actions } from '@/state/store';
-import { SignInMutation } from '@/state/fetches';
+import { signIn } from '@/state/fetches';
 
 import { Link } from 'packages/Router';
 import Form from 'packages/unrender/Form';
@@ -15,9 +13,7 @@ import { notEmpty, validateSignInForm } from '@/ui/pages/Auth/helpers';
 
 import '../Auth.scss';
 
-interface PSignIn {
-  signIn: (validData: SignInMutation) => void;
-}
+interface PSignIn {}
 interface SSignIn {}
 
 export class SignIn extends Component<PSignIn, SSignIn> {
@@ -26,7 +22,9 @@ export class SignIn extends Component<PSignIn, SSignIn> {
   }
 
   handleSubmit = async ({ username, password }) => {
-    await this.props.signIn({ username, password });
+    await signIn({ username, password });
+
+    this.props.navigate('/dashboard');
   };
 
   render() {
@@ -95,9 +93,4 @@ export class SignIn extends Component<PSignIn, SSignIn> {
   }
 }
 
-// export default connect(
-//   'jwt',
-//   actions
-//   // @ts-ignore
-// )(SignIn);
 export default SignIn;

@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from 'unistore/react';
 
 import { Link } from 'packages/Router';
 import Form from 'packages/unrender/Form';
 import Toggle from 'packages/unrender/Toggle';
 import { SubmitButton } from '@/ui/components/SubmitButton';
 
-import { actions, Action } from '@/state/store';
-import { isUsernameAvailable } from '@/state/fetches';
+import { isUsernameAvailable, signUp } from '@/state/fetches';
 
 import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 import Input from '@/ui/components/Input';
@@ -21,7 +19,7 @@ import {
 
 import '../Auth.scss';
 
-type PSignUp = {} & Action;
+type PSignUp = {};
 
 type SSignUp = {
   validationMessages?: string;
@@ -34,8 +32,9 @@ export class SignUp extends Component<PSignUp, SSignUp> {
   }
 
   handleSubmit = async ({ username, email, password }) => {
-    // @ts-ignore first arg is supplied by unistore
-    await this.props.signUp({ username, email, password });
+    const result = await signUp({ username, email, password });
+
+    console.log(result);
   };
 
   emailInputId = 'email';

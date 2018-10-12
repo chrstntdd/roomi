@@ -1,12 +1,7 @@
-import React, { Component, lazy, Placeholder } from 'react';
-import Loadable from 'react-loadable';
-import { connect } from 'unistore/react';
+import React, { Component, lazy, unstable_Suspense as Suspense } from 'react';
 
 import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
-
-import { actions } from '@/state/store';
-import { throttle } from '@/util';
 
 import './App.scss';
 
@@ -71,40 +66,18 @@ class Nav extends Component {
   }
 }
 
-interface PApp {
-  setWindowWidth: ({ windowWidth: number }) => void;
-}
+interface PApp {}
 
 interface SApp {}
-/**
- * @description CURRENT CODE SPLITTING IMPLEMENTATION SPLITS
- * AT THE TOP LEVEL, BUT IT CAN BE DONE LOWER DOWN IN THE TREE
- * AS WELL OR ON AN INDIVIDUAL COMPONENT LEVEL.
- */
+
 class App extends Component<PApp, SApp> {
   constructor(props) {
     super(props);
   }
 
-  componentDidMount() {
-    window.addEventListener(
-      'resize',
-      throttle(200, () => {
-        this.props.setWindowWidth({
-          windowWidth: document.documentElement.clientWidth
-        });
-      })
-    );
-  }
-
-  componentWillUnmount() {
-    // @ts-ignore
-    window.removeEventListener('resize', throttle);
-  }
-
   render() {
     return (
-      <Placeholder delayMs={1} fallback={<Loading />}>
+      <Suspense maxDuration={2000} fallback={<Loading />}>
         <Page>
           <Nav />
           <Router>
@@ -115,14 +88,9 @@ class App extends Component<PApp, SApp> {
             <NotFound default />
           </Router>
         </Page>
-      </Placeholder>
+      </Suspense>
     );
   }
 }
 
-// export default connect(
-//   '',
-//   actions
-//   // @ts-ignore
-// )(App);
 export default App;

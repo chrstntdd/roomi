@@ -1,7 +1,7 @@
 import createStore, { Store } from 'unistore';
 import devtools from 'unistore/devtools';
 
-import fetches, { Fetches } from './fetches';
+// import fetches, { Fetches } from './fetches';
 import syncActions, { Sync } from './actions';
 
 type RootState = {
