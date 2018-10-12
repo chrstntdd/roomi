@@ -21,8 +21,7 @@
     "webpack": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --display none -p --config webpack.config.js",
     "webpack:dev": "./node_modules/.bin/webpack-dev-server --quiet --color -d --config webpack.config.js",
     "webpack:dev-full": "concurrently -k -p \"[{name}]\" -n \"Webpack,Server,Nodemon,Mongo\" -c \"blue.bold,cyan.bold,green.bold,green.underline\" \"yarn webpack:dev\" \"cross-env NODE_ENV=development node fuse.js server-dev\"  \"nodemon build/server/index.js -e js,ts,graphql\" \"mongod\"",
-    "analyze": "cross-env ANALYZE_BUNDLE=true yarn webpack",
-    "webpack-defaults": "webpack-defaults"
+    "analyze": "cross-env ANALYZE_BUNDLE=true yarn webpack"
   },
   "husky": {
     "hooks": {
