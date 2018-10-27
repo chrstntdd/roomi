@@ -1,4 +1,5 @@
-import React, { forwardRef } from 'react';
+import React, { useRef, useContext, useMemo } from 'react';
+import { unstable_scheduleCallback as defer } from 'scheduler';
 
 /* CLONE/FORK OF https://github.com/reach/router */
 
@@ -16,21 +17,21 @@ import {
 import { createHistory, createMemorySource, globalHistory, navigate } from './history';
 
 // Sets baseuri and basepath for nested routers and links
-const BaseContext = createNamedContext('Base', { baseuri: '/', basepath: '/' });
+let BaseContext = createNamedContext('Base', { baseuri: '/', basepath: '/' });
 
 /**
  * @description Main Router component that connects the matched Component to
  * the contexts.
  */
-const Router = props => (
-  <BaseContext.Consumer>
-    {baseContext => (
-      <Location>
-        {locationContext => <RouterImpl {...baseContext} {...locationContext} {...props} />}
-      </Location>
-    )}
-  </BaseContext.Consumer>
-);
+let Router = props => {
+  let baseContext = useContext(BaseContext);
+
+  return (
+    <Location>
+      {locationContext => <RouterImpl {...baseContext} {...locationContext} {...props} />}
+    </Location>
+  );
+};
 
 interface PRouterImpl {
   basepath: any;
@@ -41,91 +42,80 @@ interface PRouterImpl {
   primary?: boolean;
 }
 
-interface SRouterImpl {}
+let RouterImpl = (props: PRouterImpl) => {
+  let {
+    basepath,
+    baseuri,
+    children,
+    component = 'div',
+    location,
+    navigate,
+    primary = true,
+    ...domProps
+  } = props;
 
-class RouterImpl extends React.PureComponent<PRouterImpl, SRouterImpl> {
-  constructor(props) {
-    super(props);
-  }
+  let routes = React.Children.map(children, createRoute(basepath));
 
-  static defaultProps = {
-    primary: true
-  };
+  let match = useMemo(() => pick(routes, location.pathname));
 
-  render() {
+  if (match) {
     let {
-      basepath,
-      baseuri,
-      children,
-      component = 'div',
+      params,
+      uri,
+      route,
+      route: { value: element }
+    } = match;
+
+    // remove the /* from the end for child routes relative paths
+    basepath = route.default ? basepath : route.path.replace(/\*$/, '');
+
+    let props = {
+      ...params,
+      uri,
       location,
-      navigate,
-      primary,
-      ...domProps
-    } = this.props;
-    const routes = React.Children.map(children, createRoute(basepath));
+      navigate: (to, options) => navigate(resolve(to, uri), options)
+    };
 
-    const match = pick(routes, location.pathname);
+    let clone = React.cloneElement(
+      element,
+      props,
+      element.props.children ? (
+        <Router primary={primary}>{element.props.children}</Router>
+      ) : (
+        undefined
+      )
+    );
 
-    if (match) {
-      let {
-        params,
-        uri,
-        route,
-        route: { value: element }
-      } = match;
+    /* using 'div' for < 16.3 support */
+    let FocusWrapper = primary ? FocusHandler : component;
+    /* don't pass any props to 'div' */
+    let wrapperProps = primary ? { uri, location, component, ...domProps } : domProps;
 
-      // remove the /* from the end for child routes relative paths
-      basepath = route.default ? basepath : route.path.replace(/\*$/, '');
-
-      const props = {
-        ...params,
-        uri,
-        location,
-        navigate: (to, options) => navigate(resolve(to, uri), options)
-      };
-
-      const clone = React.cloneElement(
-        element,
-        props,
-        element.props.children ? (
-          <Router primary={primary}>{element.props.children}</Router>
-        ) : (
-          undefined
-        )
-      );
-
-      /* using 'div' for < 16.3 support */
-      const FocusWrapper = primary ? FocusHandler : component;
-      /* don't pass any props to 'div' */
-      const wrapperProps = primary ? { uri, location, component, ...domProps } : domProps;
-
-      return (
-        <BaseContext.Provider value={{ baseuri: uri, basepath }}>
-          <FocusWrapper {...wrapperProps}>{clone}</FocusWrapper>
-        </BaseContext.Provider>
-      );
-    } else {
-      return null;
-    }
+    return (
+      <BaseContext.Provider value={{ baseuri: uri, basepath }}>
+        <FocusWrapper {...wrapperProps}>{clone}</FocusWrapper>
+      </BaseContext.Provider>
+    );
+  } else {
+    return null;
   }
-}
+};
 
-const FocusContext = createNamedContext('Focus');
+let FocusContext = createNamedContext('Focus');
 
-const FocusHandler = ({ uri, location, component, ...domProps }) => (
-  <FocusContext.Consumer>
-    {requestFocus => (
-      <FocusHandlerImpl
-        {...domProps}
-        component={component}
-        requestFocus={requestFocus}
-        uri={uri}
-        location={location}
-      />
-    )}
-  </FocusContext.Consumer>
-);
+let FocusHandler = ({ uri, location, component, ...domProps }) => {
+  let requestFocus = useContext(FocusContext);
+
+  return (
+    <FocusHandlerImpl
+      {...domProps}
+      component={component}
+      requestFocus={requestFocus}
+      uri={uri}
+      location={location}
+    />
+  );
+};
 
 interface PFocusHandlerImpl {
   component: any;
@@ -154,7 +144,7 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
   node = null;
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const initial = !prevState.uri;
+    let initial = !prevState.uri;
 
     if (initial) {
       return {
@@ -162,8 +152,8 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
         ...nextProps
       };
     } else {
-      const uriHasChanged = nextProps.uri !== prevState.uri;
-      const navigatedUpToMe =
+      let uriHasChanged = nextProps.uri !== prevState.uri;
+      let navigatedUpToMe =
         prevState.location.pathname !== nextProps.location.pathname &&
         nextProps.location.pathname === nextProps.uri;
 
@@ -210,7 +200,7 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
   };
 
   render() {
-    const {
+    let {
       children,
       component: Comp = 'div',
       location,
@@ -237,45 +227,49 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
   }
 }
 
-const Match = ({ path, children }) => (
-  <BaseContext.Consumer>
-    {({ baseuri }) => (
-      <Location>
-        {({ navigate, location }) => {
-          const resolvedPath = resolve(path, baseuri);
-          const result = match(resolvedPath, location.pathname);
+let Match = ({ path, children }) => {
+  let { baseuri } = useContext(BaseContext);
 
-          return children({
-            navigate,
-            location,
-            match: result
-              ? {
-                  ...result.params,
-                  uri: result.uri,
-                  path
-                }
-              : null
-          });
-        }}
-      </Location>
-    )}
-  </BaseContext.Consumer>
-);
+  return (
+    <Location>
+      {({ navigate, location }) => {
+        let resolvedPath = resolve(path, baseuri);
+        let result = match(resolvedPath, location.pathname);
+
+        return children({
+          navigate,
+          location,
+          match: result
+            ? {
+                ...result.params,
+                uri: result.uri,
+                path
+              }
+            : null
+        });
+      }}
+    </Location>
+  );
+};
 
 /**
  * Location START
  */
 
 // Location Context/Provider
-const LocationContext = createNamedContext('Location');
+let LocationContext = createNamedContext('Location');
 
 // sets up a listener if there isn't one already so apps don't need to be
 // wrapped in some top level provider
-const Location = ({ children }) => (
-  <LocationContext.Consumer>
-    {context => (context ? children(context) : <LocationProvider>{children}</LocationProvider>)}
-  </LocationContext.Consumer>
-);
+let Location = ({ children }) => {
+  let locationContext = useContext(LocationContext);
+
+  return locationContext ? (
+    children(locationContext)
+  ) : (
+    <LocationProvider>{children}</LocationProvider>
+  );
+};
 
 interface PLocationProvider {
   history?: any;
@@ -310,7 +304,7 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
   componentDidMount() {
     this.state.refs.unlisten = this.props.history.listen(() => {
       Promise.resolve().then(() => {
-        requestAnimationFrame(() => {
+        defer(() => {
           if (!this.unmounted) {
             this.setState(() => ({ context: this.getContext() }));
           }
@@ -339,7 +333,7 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
   }
 
   getContext() {
-    const {
+    let {
       props: {
         history: { navigate, location }
       }
@@ -349,7 +343,7 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
   }
 
   render() {
-    const isChildFn = typeof this.props.children === 'function';
+    let isChildFn = typeof this.props.children === 'function';
 
     return (
       <LocationContext.Provider value={this.state.context}>
@@ -369,7 +363,7 @@ class LocationProvider extends React.Component<PLocationProvider, SLocationProvi
  * and pass it the url that exists on the request object of whichever node
  * framework is being used.
  */
-const ServerLocation = ({ url, children }) => (
+let ServerLocation = ({ url, children }) => (
   <LocationContext.Provider
     value={{
       location: { pathname: url },
@@ -398,9 +392,9 @@ function RedirectRequest(this: IRedirectRequest, uri: string) {
   this.uri = uri;
 }
 
-const isRedirect = o => o instanceof RedirectRequest;
+let isRedirect = o => o instanceof RedirectRequest;
 
-const redirectTo = to => {
+let redirectTo = to => {
   throw new RedirectRequest(to);
 };
 
@@ -412,34 +406,19 @@ interface PRedirectImpl {
   state: any;
   to: string;
 }
-interface SRedirectImpl {}
 
-class RedirectImpl extends React.Component<PRedirectImpl, SRedirectImpl> {
-  constructor(props) {
-    super(props);
-  }
-  // Support React < 16 with this hook
-  componentDidMount() {
-    let {
-      props: { navigate, to, from, replace = true, state, noThrow, ...props }
-    } = this;
-    Promise.resolve().then(() => {
-      navigate(insertParams(to, props), { replace, state });
-    });
-  }
+let RedirectImpl = (props: PRedirectImpl) => {
+  let { navigate, to, from, replace, state, noThrow, ...restProps } = props;
+  if (!noThrow) redirectTo(insertParams(to, restProps));
 
-  render() {
-    let {
-      props: { navigate, to, from, replace, state, noThrow, ...props }
-    } = this;
-    if (!noThrow) redirectTo(insertParams(to, props));
-    return null;
-  }
-}
+  return null;
+};
 
-const Redirect = props => (
-  <Location>{locationContext => <RedirectImpl {...locationContext} {...props} />}</Location>
-);
+let Redirect = props => {
+  let locationContext = useContext(LocationContext);
+
+  return <RedirectImpl {...locationContext} {...props} />;
+};
 
 interface LinkPropGetter {
   isCurrent: boolean;
@@ -456,39 +435,38 @@ interface LinkProps {
   getProps?: (x: LinkPropGetter) => any;
 }
 
-const Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> = forwardRef(
-  ({ innerRef, ...props }, ref) => (
-    <BaseContext.Consumer>
-      {({ basepath, baseuri }) => (
-        <Location>
-          {({ location, navigate }) => {
-            const { to, state, replace, getProps = () => {}, ...anchorProps } = props;
-            const href = resolve(to, baseuri);
-            const isCurrent = location.pathname === href;
-            const isPartiallyCurrent = startsWith(location.pathname, href);
+let Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> = props => {
+  let { basepath, baseuri } = useContext(BaseContext);
+  let linkRef = useRef();
 
-            return (
-              <a
-                ref={ref || innerRef}
-                aria-current={isCurrent ? 'page' : undefined}
-                {...anchorProps}
-                {...getProps({ isCurrent, isPartiallyCurrent, href, location })}
-                href={href}
-                onClick={event => {
-                  if (anchorProps.onClick) anchorProps.onClick(event);
-                  if (shouldNavigate(event)) {
-                    event.preventDefault();
-                    navigate(href, { state, replace });
-                  }
-                }}
-              />
-            );
-          }}
-        </Location>
-      )}
-    </BaseContext.Consumer>
-  )
-);
+  return (
+    <Location>
+      {({ location, navigate }) => {
+        let { to, state, replace, getProps = () => {}, ...anchorProps } = props;
+        let href = resolve(to, baseuri);
+        let isCurrent = location.pathname === href;
+        let isPartiallyCurrent = startsWith(location.pathname, href);
+
+        return (
+          <a
+            ref={linkRef}
+            aria-current={isCurrent ? 'page' : undefined}
+            {...anchorProps}
+            {...getProps({ isCurrent, isPartiallyCurrent, href, location })}
+            href={href}
+            onClick={event => {
+              if (anchorProps.onClick) anchorProps.onClick(event);
+              if (shouldNavigate(event)) {
+                event.preventDefault();
+                navigate(href, { state, replace });
+              }
+            }}
+          />
+        );
+      }}
+    </Location>
+  );
+};
 
 /**
  * Link END //////////////////////////////////////////////////////////////////
@@ -498,14 +476,14 @@ const Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> 
  * Extras
  */
 
-const createRoute = basepath => (element): Route => {
+let createRoute = basepath => (element): Route => {
   if (element.props.default) {
     return { value: element, default: true };
   }
 
-  const elementPath = element.type === Redirect ? element.props.from : element.props.path;
+  let elementPath = element.type === Redirect ? element.props.from : element.props.path;
 
-  const path =
+  let path =
     elementPath === '/' ? basepath : `${stripSlashes(basepath)}/${stripSlashes(elementPath)}`;
 
   return {
