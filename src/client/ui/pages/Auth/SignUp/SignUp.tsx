@@ -49,14 +49,14 @@ export let SignUp = () => {
               label="Email"
               validator={isValidEmail}
               id={emailInputId}
-              {...setFormState(emailInputId).connect}
+              {...setFormState(emailInputId)}
             />
             <Input
               label="Username"
               validator={notEmpty('username')}
               asyncValidator={() => [isUsernameAvailable(formState.username || '')]}
               id={usernameInputId}
-              {...setFormState(usernameInputId).connect}
+              {...setFormState(usernameInputId)}
             />
 
             <div className="password-input-container">
@@ -65,7 +65,7 @@ export let SignUp = () => {
                 validator={isValidPassword}
                 id={passwordInputId}
                 type={on ? 'password' : 'text'}
-                {...setFormState(passwordInputId).connect}
+                {...setFormState(passwordInputId)}
               />
               <button className="visibility-toggle" onClick={() => setToggle()}>
                 {on ? <ShowPasswordIcon /> : <HidePasswordIcon />}

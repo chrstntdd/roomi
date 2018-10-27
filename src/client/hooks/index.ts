@@ -18,10 +18,8 @@ function useForm(initialState = {}) {
     const setValue = value => setFormState(prevState => ({ ...prevState, [id]: value }));
 
     return {
-      connect: {
-        onChange: event => setValue(event.target.value),
-        value
-      }
+      onChange: event => setValue(event.target.value),
+      value
     };
   }
 

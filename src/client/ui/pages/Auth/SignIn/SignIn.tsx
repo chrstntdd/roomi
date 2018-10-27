@@ -42,7 +42,7 @@ export let SignIn = props => {
               label="Username"
               id="username"
               validator={notEmpty('username')}
-              {...setFormState('username').connect}
+              {...setFormState('username')}
             />
 
             <div className="password-input-container">
@@ -51,7 +51,7 @@ export let SignIn = props => {
                 id="password"
                 validator={notEmpty('password')}
                 type={on ? 'password' : 'text'}
-                {...setFormState('password').connect}
+                {...setFormState('password')}
               />
               <button
                 type="button"
