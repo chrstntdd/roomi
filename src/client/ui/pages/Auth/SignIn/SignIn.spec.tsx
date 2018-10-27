@@ -1,6 +1,6 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from 'react-testing-library';
+import { render, cleanup, fireEvent, wait } from 'react-testing-library';
 
 import { signIn } from '@/state/fetches';
 
@@ -11,8 +11,18 @@ jest.mock('@/state/fetches', () => ({
 }));
 
 describe('SignIn page', () => {
+  let props;
+
+  beforeEach(() => {
+    props = {
+      navigate: jest.fn()
+    };
+  });
+
+  afterEach(cleanup);
+
   test('smoke', () => {
-    const { getByLabelText, getByTestId } = render(<SignIn />);
+    const { getByLabelText, getByTestId } = render(<SignIn {...props} />);
 
     expect(getByLabelText(/username/i)).toBeInTheDocument();
     expect(getByLabelText(/password/i)).toBeInTheDocument();
@@ -20,8 +30,8 @@ describe('SignIn page', () => {
   });
 
   describe('A successful sign in', () => {
-    it('should be free of errors', async () => {
-      const { getByLabelText, getByTestId } = render(<SignIn />);
+    it('should be free of errors and push to the dashboard', async () => {
+      const { getByLabelText, getByTestId } = render(<SignIn {...props} />);
       const usernameVal = 'chrstntdd';
       const passwordVal = 'password';
 
@@ -47,6 +57,10 @@ describe('SignIn page', () => {
 
       expect(signIn).toHaveBeenCalledTimes(1);
       expect(signIn).toHaveBeenCalledWith({ username: usernameVal, password: passwordVal });
+      await wait(() => {
+        expect(props.navigate).toHaveBeenCalled();
+        expect(props.navigate).toHaveBeenCalledWith('/dashboard');
+      });
     });
   });
 
