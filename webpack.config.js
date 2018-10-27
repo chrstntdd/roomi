@@ -6,7 +6,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const BundleBuddyWebpackPlugin = require('bundle-buddy-webpack-plugin');
+const BundleAnalyzer = require('webpack-bundle-analyzer');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const Stylish = require('webpack-stylish');
 
@@ -114,9 +114,9 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src/client/'),
       packages: path.resolve(__dirname, 'src/packages/'),
-      react: path.resolve(__dirname, 'vendor/react'),
+      // react: path.resolve(__dirname, 'vendor/react'),
       scheduler: path.resolve(__dirname, 'vendor/scheduler'),
-      'react-dom': path.resolve(__dirname, 'vendor/react-dom'),
+      // 'react-dom': path.resolve(__dirname, 'vendor/react-dom'),
       'react-cache': path.resolve(__dirname, 'vendor/react-cache')
     }
   },
@@ -179,7 +179,7 @@ module.exports = {
         ]
       : []),
     new Stylish(),
-    ...(ANALYZE_BUNDLE ? [new BundleBuddyWebpackPlugin()] : [])
+    ...(ANALYZE_BUNDLE ? [new BundleAnalyzer()] : [])
   ],
   node: {
     fs: 'empty',

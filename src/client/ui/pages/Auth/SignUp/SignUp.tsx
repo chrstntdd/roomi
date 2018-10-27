@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-
-import { Link } from 'packages/Router';
-import Form from 'packages/unrender/Form';
-import Toggle from 'packages/unrender/Toggle';
-import { SubmitButton } from '@/ui/components/SubmitButton';
+import React from 'react';
 
 import { isUsernameAvailable, signUp } from '@/state/fetches';
 
+import { Link } from 'packages/Router';
+import { SubmitButton } from '@/ui/components/SubmitButton';
 import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 import Input from '@/ui/components/Input';
+
+import { useToggle, useForm } from '@/hooks';
 
 import {
   validateSignUpForm,
@@ -19,97 +18,75 @@ import {
 
 import '../Auth.scss';
 
-type PSignUp = {};
+let emailInputId = 'email';
+let usernameInputId = 'username';
+let passwordInputId = 'password';
 
-type SSignUp = {
-  validationMessages?: string;
-  formItems: string[];
-};
+export let SignUp = () => {
+  let [on, setToggle] = useToggle(true);
+  let [formState, setFormState] = useForm();
 
-export class SignUp extends Component<PSignUp, SSignUp> {
-  constructor(props) {
-    super(props);
-  }
-
-  handleSubmit = async ({ username, email, password }) => {
+  let handleSubmit = async ({ username, email, password }) => {
     await signUp({ username, email, password });
   };
 
-  emailInputId = 'email';
-  usernameInputId = 'username';
-  passwordInputId = 'password';
+  return (
+    <main>
+      <div className="kinda-center">
+        <form onSubmit={e => e.preventDefault() || handleSubmit(formState)}>
+          <div className="form-container">
+            <div className="auth-toggle">
+              <Link className="choice" to="/sign-in">
+                Sign In
+              </Link>
+              <Link className="choice active" to="/sign-up">
+                Sign Up
+              </Link>
+            </div>
 
-  render() {
-    return (
-      <main>
-        <div className="kinda-center">
-          <Form>
-            {({ input, values }) => (
-              // @ts-ignore
-              <form onSubmit={e => e.preventDefault() || this.handleSubmit(values)}>
-                <div className="form-container">
-                  <div className="auth-toggle">
-                    <Link className="choice" to="/sign-in">
-                      Sign In
-                    </Link>
-                    <Link className="choice active" to="/sign-up">
-                      Sign Up
-                    </Link>
-                  </div>
+            <legend className="legend">Sign up for an account</legend>
+            <Input
+              label="Email"
+              validator={isValidEmail}
+              id={emailInputId}
+              {...setFormState(emailInputId).connect}
+            />
+            <Input
+              label="Username"
+              validator={notEmpty('username')}
+              asyncValidator={() => [isUsernameAvailable(formState.username || '')]}
+              id={usernameInputId}
+              {...setFormState(usernameInputId).connect}
+            />
 
-                  <legend className="legend">Sign up for an account</legend>
-                  <Input
-                    label="Email"
-                    validator={isValidEmail}
-                    id={this.emailInputId}
-                    {...input(this.emailInputId).connect}
-                  />
-                  <Input
-                    label="Username"
-                    validator={notEmpty('username')}
-                    asyncValidator={() => [isUsernameAvailable(values.username || '')]}
-                    id={this.usernameInputId}
-                    {...input(this.usernameInputId).connect}
-                  />
-                  <Toggle initial={true}>
-                    {({ on, toggle }) => (
-                      <div className="password-input-container">
-                        <Input
-                          label="Password"
-                          validator={isValidPassword}
-                          id={this.passwordInputId}
-                          type={on ? 'password' : 'text'}
-                          {...input(this.passwordInputId).connect}
-                        />
-                        <button className="visibility-toggle" onClick={toggle}>
-                          {on ? <ShowPasswordIcon /> : <HidePasswordIcon />}
-                        </button>
-                      </div>
-                    )}
-                  </Toggle>
-                  <SubmitButton
-                    data-testid="signUp-button"
-                    disabled={validateSignUpForm(values).matchWith({
-                      Success: _ => false,
-                      Failure: _ => true
-                    })}
-                    className="searchButton"
-                  >
-                    Sign Up
-                  </SubmitButton>
-                </div>
-              </form>
-            )}
-          </Form>
-        </div>
-      </main>
-    );
-  }
-}
+            <div className="password-input-container">
+              <Input
+                label="Password"
+                validator={isValidPassword}
+                id={passwordInputId}
+                type={on ? 'password' : 'text'}
+                {...setFormState(passwordInputId).connect}
+              />
+              <button className="visibility-toggle" onClick={() => setToggle()}>
+                {on ? <ShowPasswordIcon /> : <HidePasswordIcon />}
+              </button>
+            </div>
 
-// export default connect(
-//   'jwt',
-//   actions
-//   // @ts-ignore
-// )(SignUp);
+            <SubmitButton
+              data-testid="signUp-button"
+              disabled={validateSignUpForm(formState).matchWith({
+                Success: _ => false,
+                Failure: _ => true
+              })}
+              className="searchButton"
+            >
+              Sign Up
+            </SubmitButton>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
+};
+
 export default SignUp;
