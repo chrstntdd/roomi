@@ -1,4 +1,4 @@
-import React, { Component, lazy, unstable_Suspense as Suspense } from 'react';
+import React, { Component, lazy, Suspense } from 'react';
 
 import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
