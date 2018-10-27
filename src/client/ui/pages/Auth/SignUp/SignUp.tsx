@@ -32,9 +32,7 @@ export class SignUp extends Component<PSignUp, SSignUp> {
   }
 
   handleSubmit = async ({ username, email, password }) => {
-    const result = await signUp({ username, email, password });
-
-    console.log(result);
+    await signUp({ username, email, password });
   };
 
   emailInputId = 'email';

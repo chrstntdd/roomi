@@ -1,15 +1,13 @@
-import { store, initialState } from '@/state/store';
 import Cmd from '@/cmd';
 import { sha256 } from '@/util';
 
-import fetches from './';
+import * as fetches from './';
 
 jest.mock('@/cmd');
 jest.mock('@/util', () => ({
   sha256: jest.fn(x => x)
 }));
 
-const _ = initialState;
 const mockToken = '3fc9b689459d738f8c88a3a48aa9e33542016b7a4052e001aaa536fca74813cb';
 const mockErrorMessage = 'An error occurred';
 
@@ -23,7 +21,7 @@ describe('fetches', () => {
     const payload = { email: 'a', username: 'b', password: 'd' };
 
     describe('the success case', () => {
-      it('should hash the password, make a mutation, and set a token', async () => {
+      it('should hash the password, make a mutation, and return a token', async () => {
         (Cmd.mutation as jest.Mock).mockImplementationOnce(() =>
           Promise.resolve({
             signUp: {
@@ -32,28 +30,28 @@ describe('fetches', () => {
           })
         );
 
-        await fetches(store).signUp(_, payload);
+        const response = await fetches.signUp(payload);
 
         expect(sha256).toHaveBeenCalledTimes(1);
         expect(Cmd.mutation).toHaveBeenCalledTimes(1);
         expect((Cmd.mutation as jest.Mock).mock.calls[0]).toMatchSnapshot();
-        expect(store.getState().jwt).toEqual(mockToken);
+        expect(response).toMatchSnapshot();
       });
     });
 
     describe('the failure case', () => {
-      it('should set the message returned by the api', async () => {
+      it('should return the message returned by the api', async () => {
         (Cmd.mutation as jest.Mock).mockImplementationOnce(() =>
           Promise.reject({
             message: mockErrorMessage
           })
         );
 
-        await fetches(store).signUp(_, payload);
+        const response = await fetches.signUp(payload);
 
         expect(sha256).toHaveBeenCalledTimes(1);
         expect(Cmd.mutation).toHaveBeenCalledTimes(1);
-        expect(store.getState().graphQlErrorMsg).toEqual(mockErrorMessage);
+        expect(response).toMatchSnapshot();
       });
     });
   });
@@ -62,7 +60,7 @@ describe('fetches', () => {
     const payload = { username: 'b', password: 'd' };
 
     describe('the success case', () => {
-      it('should hash the password, make a mutation, and set a token', async () => {
+      it('should hash the password, make a mutation, and return a token', async () => {
         (Cmd.mutation as jest.Mock).mockImplementationOnce(() =>
           Promise.resolve({
             signIn: {
@@ -71,28 +69,28 @@ describe('fetches', () => {
           })
         );
 
-        await fetches(store).signIn(_, payload);
+        const response = await fetches.signIn(payload);
 
         expect(sha256).toHaveBeenCalledTimes(1);
         expect(Cmd.mutation).toHaveBeenCalledTimes(1);
         expect((Cmd.mutation as jest.Mock).mock.calls[0]).toMatchSnapshot();
-        expect(store.getState().jwt).toEqual(mockToken);
+        expect(response).toMatchSnapshot();
       });
     });
 
     describe('the failure case', () => {
-      it('should set the message returned by the api', async () => {
+      it('should return the message returned by the api', async () => {
         (Cmd.mutation as jest.Mock).mockImplementationOnce(() =>
           Promise.reject({
             message: mockErrorMessage
           })
         );
 
-        await fetches(store).signIn(_, payload);
+        const response = await fetches.signIn(payload);
 
         expect(sha256).toHaveBeenCalledTimes(1);
         expect(Cmd.mutation).toHaveBeenCalledTimes(1);
-        expect(store.getState().graphQlErrorMsg).toEqual(mockErrorMessage);
+        expect(response).toMatchSnapshot();
       });
     });
   });

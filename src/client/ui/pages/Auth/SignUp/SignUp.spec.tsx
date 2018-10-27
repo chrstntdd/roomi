@@ -2,17 +2,15 @@ import React from 'react';
 import 'jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from 'react-testing-library';
 
+import { signUp } from '@/state/fetches';
+
 import { SignUp } from './';
 
+jest.mock('@/state/fetches', () => ({
+  signUp: jest.fn()
+}));
+
 describe('SignUp page', () => {
-  let props;
-
-  beforeEach(() => {
-    props = {
-      signUp: jest.fn()
-    };
-  });
-
   afterEach(cleanup);
   test('smoke', () => {
     const { getByLabelText, getByText } = render(<SignUp />);
@@ -25,7 +23,7 @@ describe('SignUp page', () => {
 
   describe('a successful signup', () => {
     it('the form should be free of errors and the user should be authenticated at the end of it', () => {
-      const { getByTestId, getByLabelText, getByText } = render(<SignUp {...props} />);
+      const { getByTestId, getByLabelText, getByText } = render(<SignUp />);
 
       const usernameVal = 'chrstntdd';
       const emailVal = 'chrstntdd@gmail.com';
@@ -56,8 +54,8 @@ describe('SignUp page', () => {
 
       fireEvent.click(submitButton);
 
-      expect(props.signUp).toHaveBeenCalledTimes(1);
-      expect(props.signUp).toHaveBeenCalledWith({
+      expect(signUp).toHaveBeenCalledTimes(1);
+      expect(signUp).toHaveBeenCalledWith({
         username: usernameVal,
         password: passwordVal,
         email: emailVal

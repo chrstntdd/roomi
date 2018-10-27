@@ -2,21 +2,17 @@ import React from 'react';
 import 'jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from 'react-testing-library';
 
+import { signIn } from '@/state/fetches';
+
 import { SignIn } from './';
 
+jest.mock('@/state/fetches', () => ({
+  signIn: jest.fn()
+}));
+
 describe('SignIn page', () => {
-  let props;
-
-  beforeEach(() => {
-    props = {
-      signIn: jest.fn(x => x)
-    };
-  });
-
-  afterEach(cleanup);
-
   test('smoke', () => {
-    const { getByLabelText, getByTestId } = render(<SignIn {...props} />);
+    const { getByLabelText, getByTestId } = render(<SignIn />);
 
     expect(getByLabelText(/username/i)).toBeInTheDocument();
     expect(getByLabelText(/password/i)).toBeInTheDocument();
@@ -25,7 +21,7 @@ describe('SignIn page', () => {
 
   describe('A successful sign in', () => {
     it('should be free of errors', async () => {
-      const { getByLabelText, getByTestId } = render(<SignIn {...props} />);
+      const { getByLabelText, getByTestId } = render(<SignIn />);
       const usernameVal = 'chrstntdd';
       const passwordVal = 'password';
 
@@ -49,14 +45,14 @@ describe('SignIn page', () => {
 
       fireEvent.click(button);
 
-      expect(props.signIn).toHaveBeenCalledTimes(1);
-      expect(props.signIn).toHaveBeenCalledWith({ username: usernameVal, password: passwordVal });
+      expect(signIn).toHaveBeenCalledTimes(1);
+      expect(signIn).toHaveBeenCalledWith({ username: usernameVal, password: passwordVal });
     });
   });
 
   describe('password visibility toggle', () => {
     it('should toggle the visibility of the password input lol', () => {
-      const { getByLabelText, getByTestId } = render(<SignIn {...props} />);
+      const { getByLabelText, getByTestId } = render(<SignIn />);
       const passwordVal = 'password';
 
       const password = getByLabelText(/password/i);
