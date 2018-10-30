@@ -1,4 +1,5 @@
 import React from 'react';
+import invariant from 'invariant';
 
 const startsWith = (string: string, search: string): boolean =>
   string.substr(0, search.length) === search;
@@ -101,15 +102,14 @@ const pick = (routes: Route[], uri: string): ReturnRoute | null => {
 
       if (dynamicMatch && !isRootUri) {
         let matchIsNotReserved = reservedNames.indexOf(dynamicMatch[1]) === -1;
-
-        console.warn(
+        invariant(
           matchIsNotReserved,
           `<Router> dynamic segment "${
             dynamicMatch[1]
           }" is a reserved name. Please use a different name in path "${route.path}".`
         );
 
-        const value = decodeURIComponent(uriSegment);
+        let value = decodeURIComponent(uriSegment);
         params[dynamicMatch[1]] = value;
       } else if (routeSegment !== uriSegment) {
         // Current segments don't match, not dynamic, not a wildcard, so no match

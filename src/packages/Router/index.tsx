@@ -1,4 +1,5 @@
 import React, { useRef, useContext, useMemo } from 'react';
+import invariant from 'invariant';
 import { unstable_scheduleCallback as defer } from 'scheduler';
 
 /* CLONE/FORK OF https://github.com/reach/router */
@@ -12,7 +13,8 @@ import {
   Route,
   shouldNavigate,
   startsWith,
-  stripSlashes
+  stripSlashes,
+  validateRedirect
 } from './helpers';
 import { createHistory, createMemorySource, globalHistory, navigate } from './history';
 
@@ -436,7 +438,7 @@ interface LinkProps {
 }
 
 let Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> = props => {
-  let { basepath, baseuri } = useContext(BaseContext);
+  let { baseuri } = useContext(BaseContext);
   let linkRef = useRef();
 
   return (
@@ -477,6 +479,31 @@ let Link: React.ComponentType<LinkProps & React.HTMLProps<HTMLAnchorElement>> = 
  */
 
 let createRoute = basepath => (element): Route => {
+  if (!element) return null;
+
+  if (process.env.NODE_ENV !== 'production') {
+    invariant(
+      element.props.path || element.props.default || element.type === Redirect,
+      `<Router>: Children of <Router> must have a \`path\` or \`default\` prop, or be a \`<Redirect>\`. None found on element type \`${
+        element.type
+      }\``
+    );
+
+    invariant(
+      !(element.type === Redirect && (!element.props.from || !element.props.to)),
+      `<Redirect from="${element.props.from} to="${
+        element.props.to
+      }"/> requires both "from" and "to" props when inside a <Router>.`
+    );
+
+    invariant(
+      !(element.type === Redirect && !validateRedirect(element.props.from, element.props.to)),
+      `<Redirect from="${element.props.from} to="${
+        element.props.to
+      }"/> has mismatched dynamic segments, ensure both paths have the exact same dynamic segments.`
+    );
+  }
+
   if (element.props.default) {
     return { value: element, default: true };
   }
