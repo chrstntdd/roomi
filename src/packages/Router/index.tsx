@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useMemo } from 'react';
+import React, { useRef, useContext, useMemo, useState, useEffect, useRef } from 'react';
 import invariant from 'invariant';
 import { unstable_scheduleCallback as defer } from 'scheduler';
 
@@ -26,6 +26,7 @@ let BaseContext = createNamedContext('Base', { baseuri: '/', basepath: '/' });
  * the contexts.
  */
 let Router = props => {
+  console.log('new props: ', props);
   let baseContext = useContext(BaseContext);
 
   return (
@@ -58,7 +59,10 @@ let RouterImpl = (props: PRouterImpl) => {
 
   let routes = React.Children.map(children, createRoute(basepath));
 
-  let match = useMemo(() => pick(routes, location.pathname));
+  // let match = useMemo(() => pick(routes, location.pathname));
+  // console.log('called');
+
+  let match = useMemo(() => pick(routes, location.pathname), [routes, location.pathname]);
 
   if (match) {
     let {
@@ -134,53 +138,71 @@ interface SFocusHandlerImpl {
 let initialRender = true;
 let focusHandlerCount = 0;
 
-class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerImpl> {
-  constructor(props) {
-    super(props);
-  }
+function FocusHandlerImpl(props: PFocusHandlerImpl) {
+  const [state, setState] = useState({ shouldFocus: null });
+  const compEl = useRef(null);
 
-  state = {
-    shouldFocus: null
-  };
-
-  node = null;
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let initial = !prevState.uri;
-
-    if (initial) {
-      return {
-        shouldFocus: true,
-        ...nextProps
-      };
-    } else {
-      let uriHasChanged = nextProps.uri !== prevState.uri;
-      let navigatedUpToMe =
-        prevState.location.pathname !== nextProps.location.pathname &&
-        nextProps.location.pathname === nextProps.uri;
-
-      return {
-        shouldFocus: uriHasChanged || navigatedUpToMe,
-        ...nextProps
-      };
-    }
-  }
-
-  componentDidMount() {
+  // cDM && cWU
+  useEffect(() => {
+    focus();
     focusHandlerCount++;
-    this.focus();
-  }
+    setState({ shouldFocus: true, ...props });
 
-  componentWillUnmount() {
-    focusHandlerCount--;
-    focusHandlerCount === 0 && (initialRender = true);
-  }
+    // cleanup
+    return () => {
+      focusHandlerCount--;
+      if (focusHandlerCount === 0) {
+        initialRender = true;
+      }
+    };
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    prevProps.location !== this.props.location && this.state.shouldFocus && this.focus();
-  }
+  // cDU
+  useEffect(
+    () => {
+      if (state.shouldFocus) {
+        focus();
+      }
+    },
+    [props.location]
+  );
 
-  focus() {
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   let initial = !prevState.uri;
+
+  //   if (initial) {
+  //     return {
+  //       shouldFocus: true,
+  //       ...nextProps
+  //     };
+  //   } else {
+  //     let uriHasChanged = nextProps.uri !== prevState.uri;
+  //     let navigatedUpToMe =
+  //       prevState.location.pathname !== nextProps.location.pathname &&
+  //       nextProps.location.pathname === nextProps.uri;
+
+  //     return {
+  //       shouldFocus: uriHasChanged || navigatedUpToMe,
+  //       ...nextProps
+  //     };
+  //   }
+  // }
+
+  // componentDidMount() {
+  //   focusHandlerCount++;
+  //   this.focus();
+  // }
+
+  // componentWillUnmount() {
+  //   focusHandlerCount--;
+  //   focusHandlerCount === 0 && (initialRender = true);
+  // }
+
+  // componentDidUpdate(prevProps) {
+  //   prevProps.location !== this.props.location && this.state.shouldFocus && this.focus();
+  // }
+
+  function focus() {
     if (process.env.NODE_ENV === 'test') {
       // getting cannot read property focus of null in the tests
       // and that bit of global `initialRender` state causes problems
@@ -188,45 +210,41 @@ class FocusHandlerImpl extends React.Component<PFocusHandlerImpl, SFocusHandlerI
       return;
     }
 
-    let { requestFocus } = this.props;
+    let { requestFocus } = props;
 
     requestFocus
-      ? requestFocus(this.node)
+      ? requestFocus(compEl.current)
       : initialRender
         ? (initialRender = false)
-        : !this.node.contains(document.activeElement) && this.node.focus();
+        : !compEl.current.contains(document.activeElement) && compEl.current.focus();
   }
 
-  requestFocus = node => {
-    !this.state.shouldFocus && node.focus();
+  let internalRequestFocus = node => {
+    !state.shouldFocus && node.focus();
   };
 
-  render() {
-    let {
-      children,
-      component: Comp = 'div',
-      location,
-      requestFocus,
-      role = 'group',
-      style,
-      uri,
-      ...domProps
-    } = this.props;
+  let {
+    children,
+    component: Comp = 'div',
+    location,
+    requestFocus,
+    role = 'group',
+    style,
+    uri,
+    ...domProps
+  } = props;
 
-    return (
-      <Comp
-        ref={n => (this.node = n)}
-        role={role}
-        style={{ outline: 'none', ...style }}
-        tabIndex="-1"
-        {...domProps}
-      >
-        <FocusContext.Provider value={this.requestFocus}>
-          {this.props.children}
-        </FocusContext.Provider>
-      </Comp>
-    );
-  }
+  return (
+    <Comp
+      ref={compEl}
+      role={role}
+      style={{ outline: 'none', ...style }}
+      tabIndex="-1"
+      {...domProps}
+    >
+      <FocusContext.Provider value={internalRequestFocus}>{props.children}</FocusContext.Provider>
+    </Comp>
+  );
 }
 
 let Match = ({ path, children }) => {
@@ -264,6 +282,7 @@ let LocationContext = createNamedContext('Location');
 // sets up a listener if there isn't one already so apps don't need to be
 // wrapped in some top level provider
 let Location = ({ children }) => {
+  // console.log('in Location HOC');
   let locationContext = useContext(LocationContext);
 
   return locationContext ? (
@@ -275,7 +294,7 @@ let Location = ({ children }) => {
 
 interface PLocationProvider {
   history?: any;
-  children: (any) => React.ReactNode;
+  children?: (any) => React.ReactNode;
 }
 interface SLocationProvider {
   context: {
@@ -287,72 +306,85 @@ interface SLocationProvider {
   };
 }
 
-class LocationProvider extends React.Component<PLocationProvider, SLocationProvider> {
-  constructor(props) {
-    super(props);
-  }
+LocationProvider.defaultProps = {
+  history: globalHistory
+};
 
-  public static defaultProps = {
-    history: globalHistory
-  };
-
-  state = {
-    context: this.getContext(),
+function LocationProvider(props: PLocationProvider) {
+  const [locationState, setLocationState] = useState({
+    context: {
+      navigate: props.history.navigate,
+      location: props.history.location
+    },
     refs: { unlisten: null }
-  };
+  });
 
-  unmounted: boolean | null = null;
+  let unmounted: boolean | null = null;
 
-  componentDidMount() {
-    this.state.refs.unlisten = this.props.history.listen(() => {
+  useEffect(() => {
+    locationState.refs.unlisten = props.history.listen(() => {
       Promise.resolve().then(() => {
         defer(() => {
-          if (!this.unmounted) {
-            this.setState(() => ({ context: this.getContext() }));
+          if (!unmounted) {
+            setLocationState({ context: getContext() });
           }
         });
       });
     });
-  }
 
-  componentDidCatch(error, info) {
-    if (isRedirect(error)) {
-      this.props.history.navigate(error.uri, { replace: true });
-    } else {
-      throw error;
-    }
-  }
+    return () => {
+      unmounted = true;
+      locationState.refs.unlisten();
+    };
+  }, []);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.context.location !== this.state.context.location) {
-      this.props.history._onTransitionComplete();
-    }
-  }
+  // componentDidMount() {
+  //   this.state.refs.unlisten = this.props.history.listen(() => {
+  //     Promise.resolve().then(() => {
+  //       defer(() => {
+  //         if (!this.unmounted) {
+  //           this.setState(() => ({ context: this.getContext() }));
+  //         }
+  //       });
+  //     });
+  //   });
+  // }
 
-  componentWillUnmount() {
-    this.unmounted = true;
-    this.state.refs.unlisten();
-  }
+  // componentDidCatch(error, info) {
+  //   if (isRedirect(error)) {
+  //     this.props.history.navigate(error.uri, { replace: true });
+  //   } else {
+  //     throw error;
+  //   }
+  // }
 
-  getContext() {
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.context.location !== this.state.context.location) {
+  //     console.log('in CDU');
+  //     this.props.history._onTransitionComplete();
+  //   }
+  // }
+
+  // componentWillUnmount() {
+  //   this.unmounted = true;
+  //   this.state.refs.unlisten();
+  // }
+
+  function getContext() {
     let {
-      props: {
-        history: { navigate, location }
-      }
-    } = this;
+      history: { navigate, location }
+    } = props;
 
     return { navigate, location };
   }
 
-  render() {
-    let isChildFn = typeof this.props.children === 'function';
-
-    return (
-      <LocationContext.Provider value={this.state.context}>
-        {isChildFn ? this.props.children(this.state.context) : this.props.children || null}
-      </LocationContext.Provider>
-    );
-  }
+  return (
+    <LocationContext.Provider value={locationState.context}>
+      {typeof props.children === 'function'
+        ? props.children(locationState.context)
+        : props.children || null}
+    </LocationContext.Provider>
+  );
 }
 
 /**

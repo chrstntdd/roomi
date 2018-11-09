@@ -1,4 +1,4 @@
-import React, { Component, lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 
 import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
@@ -34,63 +34,43 @@ const SignUp = lazy(() => import('@/ui/pages/Auth/SignUp'));
 //   </Location>
 // );
 
-class Nav extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  state = {
-    navExpanded: false
-  };
-
-  render() {
-    return (
-      <nav className="siteNav">
-        <Link className="navLinks" to="/">
-          Home
-        </Link>
-        <Link className="navLinks" to="/dashboard">
-          Dashboard
-        </Link>
-        <Link className="navLinks" to="/unknown">
-          Unknown
-        </Link>
-        <Link className="navLinks" to="/sign-in">
-          sign-in
-        </Link>
-        <Link className="navLinks" to="/sign-up">
-          sign-up
-        </Link>
-      </nav>
-    );
-  }
+function Nav() {
+  return (
+    <nav className="siteNav">
+      <Link className="navLinks" to="/">
+        Home
+      </Link>
+      <Link className="navLinks" to="/dashboard">
+        Dashboard
+      </Link>
+      <Link className="navLinks" to="/unknown">
+        Unknown
+      </Link>
+      <Link className="navLinks" to="/sign-in">
+        sign-in
+      </Link>
+      <Link className="navLinks" to="/sign-up">
+        sign-up
+      </Link>
+    </nav>
+  );
 }
 
-interface PApp {}
-
-interface SApp {}
-
-class App extends Component<PApp, SApp> {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <Suspense maxDuration={2000} fallback={<Loading />}>
-        <Page>
-          <Nav />
-          <Router>
-            <Home path="/" />
-            <Dashboard path="/dashboard" />
-            <SignIn path="/sign-in" />
-            <SignUp path="/sign-up" />
-            <NotFound default />
-          </Router>
-        </Page>
-      </Suspense>
-    );
-  }
+function App() {
+  return (
+    <Suspense maxDuration={2000} fallback={<Loading />}>
+      <Page>
+        <Nav />
+        <Router>
+          <Home path="/" />
+          <Dashboard path="/dashboard" />
+          <SignIn path="/sign-in" />
+          <SignUp path="/sign-up" />
+          <NotFound default />
+        </Router>
+      </Page>
+    </Suspense>
+  );
 }
 
 export default App;

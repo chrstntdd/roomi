@@ -114,9 +114,9 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src/client/'),
       packages: path.resolve(__dirname, 'src/packages/'),
-      // react: path.resolve(__dirname, 'vendor/react'),
+      react: path.resolve(__dirname, 'vendor/react'),
       scheduler: path.resolve(__dirname, 'vendor/scheduler'),
-      // 'react-dom': path.resolve(__dirname, 'vendor/react-dom'),
+      'react-dom': path.resolve(__dirname, 'vendor/react-dom'),
       'react-cache': path.resolve(__dirname, 'vendor/react-cache')
     }
   },
