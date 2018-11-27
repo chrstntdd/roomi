@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import './Page.scss';
 
@@ -6,14 +6,8 @@ import './Page.scss';
  * @description Wrapper that renders a page. The top-level <Page />
  * will render the main <Router /> component.
  */
-export class Page extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return <div className="page-container">{this.props.children}</div>;
-  }
+export function Page(props) {
+  return <div className="page-container">{props.children}</div>;
 }
 
 export default Page;

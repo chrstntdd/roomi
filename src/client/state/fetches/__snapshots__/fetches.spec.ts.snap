@@ -1,21 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`fetches signIn mutation the success case should hash the password, make a mutation, and set a token 1`] = `
+exports[`fetches signIn mutation the failure case should return the message returned by the api 1`] = `
+Object {
+  "graphQlErrorMsg": "An error occurred",
+}
+`;
+
+exports[`fetches signIn mutation the success case should hash the password, make a mutation, and return a token 1`] = `
 Array [
   "signIn {
-        signIn(username: \\"b\\", password: \\"d\\") {
-          token
-        }
-      }",
+      signIn(username: \\"b\\", password: \\"d\\") {
+        token
+      }
+    }",
 ]
 `;
 
-exports[`fetches signUp mutation the success case should hash the password, make a mutation, and set a token 1`] = `
+exports[`fetches signIn mutation the success case should hash the password, make a mutation, and return a token 2`] = `
+Object {
+  "isAuthenticated": true,
+  "jwt": "3fc9b689459d738f8c88a3a48aa9e33542016b7a4052e001aaa536fca74813cb",
+}
+`;
+
+exports[`fetches signUp mutation the failure case should return the message returned by the api 1`] = `
+Object {
+  "graphQlErrorMsg": "An error occurred",
+}
+`;
+
+exports[`fetches signUp mutation the success case should hash the password, make a mutation, and return a token 1`] = `
 Array [
   "signUp {
-        signUp(email: \\"a\\", username: \\"b\\", password: \\"d\\") {
-          token
-        }
-      }",
+      signUp(email: \\"a\\", username: \\"b\\", password: \\"d\\") {
+        token
+      }
+    }",
 ]
+`;
+
+exports[`fetches signUp mutation the success case should hash the password, make a mutation, and return a token 2`] = `
+Object {
+  "isAuthenticated": true,
+  "jwt": "3fc9b689459d738f8c88a3a48aa9e33542016b7a4052e001aaa536fca74813cb",
+}
 `;
