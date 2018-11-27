@@ -211,6 +211,13 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@chrstntdd/router@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@chrstntdd/router/-/router-0.0.2.tgz#181f0b09355a41d59f88636587e7ad92b665f386"
+  integrity sha512-AEn+o5DLy+SZY0XpBw9Cu3pyYVXlaVXVLs67+SOZ7gfpQNvWgbOGGd7foamJIKSWPhKLNypRGI8jQ+W45xd0nA==
+  dependencies:
+    typescript "^3.1.6"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
@@ -9426,6 +9433,11 @@ typescript@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.1.tgz#3362ba9dd1e482ebb2355b02dfe8bcd19a2c7c96"
   integrity sha512-Veu0w4dTc/9wlWNf2jeRInNodKlcdLgemvPsrNpfu5Pq39sgfFjvIIgTsvUHCoLBnMhPoUA+tFxsXjU6VexVRQ==
+
+typescript@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.6.tgz#b6543a83cfc8c2befb3f4c8fba6896f5b0c9be68"
+  integrity sha512-tDMYfVtvpb96msS1lDX9MEdHrW4yOuZ4Kdc4Him9oU796XldPYF/t2+uKoX0BBa0hXXwDlqYQbXY5Rzjzc5hBA==
 
 uglify-es@^3.3.4, uglify-es@^3.3.9:
   version "3.3.9"

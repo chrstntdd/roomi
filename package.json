@@ -35,6 +35,7 @@
     ]
   },
   "dependencies": {
+    "@chrstntdd/router": "^0.0.2",
     "autoprefixer": "^9.1.5",
     "bcrypt": "^3.0.1",
     "body-parser": "^1.18.3",

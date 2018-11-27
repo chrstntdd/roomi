@@ -123,6 +123,11 @@ module.exports = {
 
   module: {
     rules: [
+      {
+        type: 'javascript/auto',
+        test: /\.mjs$/,
+        use: []
+      },
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
       {
         test: /\.(ts|tsx)?$/,

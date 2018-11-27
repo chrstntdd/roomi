@@ -1,8 +1,8 @@
 import React from 'react';
+import { Link } from '@chrstntdd/router';
 
 import { signIn } from '@/state/fetches';
 
-import { Link } from 'packages/Router';
 import Input from '@/ui/components/Input';
 import { SubmitButton } from '@/ui/components/SubmitButton';
 import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';

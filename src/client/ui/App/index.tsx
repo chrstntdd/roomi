@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
+import { Router, Link } from '@chrstntdd/router';
 
-import { Router, Link } from 'packages/Router';
 import Page from '@/ui/components/Page';
 
 import './App.scss';
