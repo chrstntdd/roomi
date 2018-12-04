@@ -39,8 +39,7 @@ module.exports = {
     }
   },
 
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: 'source-map',
+  ...(IS_PRODUCTION && { devtool: 'source-map' }),
 
   optimization: {
     runtimeChunk: true,
@@ -81,6 +80,25 @@ module.exports = {
             // https://github.com/terser-js/terser/issues/120
             inline: 2,
             dead_code: true,
+            pure_funcs: [
+              '_elm_lang$core$Native_Utils.update',
+              'A2',
+              'A3',
+              'A4',
+              'A5',
+              'A6',
+              'A7',
+              'A8',
+              'A9',
+              'F2',
+              'F3',
+              'F4',
+              'F5',
+              'F6',
+              'F7',
+              'F8',
+              'F9'
+            ],
             pure_getters: true,
             keep_fargs: false,
             unsafe_comps: true,
@@ -109,8 +127,7 @@ module.exports = {
   },
 
   resolve: {
-    // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: ['.ts', '.tsx', '.js', '.json', '.elm'],
     alias: {
       '@': path.resolve(__dirname, 'src/client/'),
       packages: path.resolve(__dirname, 'src/packages/'),
@@ -122,13 +139,27 @@ module.exports = {
   },
 
   module: {
+    noParse: /\.elm$/,
     rules: [
+      {
+        test: /\.elm$/,
+        include: path.resolve(__dirname, 'src'),
+        use: [
+          {
+            loader: require.resolve('elm-webpack-loader'),
+            options: {
+              pathToElm: path.resolve(__dirname, 'node_modules/.bin/elm'),
+              runtimeOptions: ['-A128M', '-H128M', '-n8m'],
+              ...(IS_PRODUCTION ? { optimize: IS_PRODUCTION } : { debug: true, forceWatch: true })
+            }
+          }
+        ]
+      },
       {
         type: 'javascript/auto',
         test: /\.mjs$/,
         use: []
       },
-      // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
       {
         test: /\.(ts|tsx)?$/,
         include: path.resolve(__dirname, 'src'),
@@ -136,7 +167,6 @@ module.exports = {
         use: [{ loader: 'awesome-typescript-loader', options: { transpileOnly: true } }]
       },
 
-      // All output '.js' files will have any sourcemaps re-processed by 'sourceyarn -map-loader'.
       { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
 
       {

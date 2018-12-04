@@ -1,5 +1,14 @@
 import React from 'react';
 
-const Dashboard = props => <div className="dashboard">Dashboard</div>;
+import ElmComponent from '@/ui/components/ElmComponent';
+import { Elm } from '@/Main.elm';
+
+function Dashboard() {
+  return (
+    <div className="dashboard">
+      <ElmComponent src={Elm.Main} flags={true} />
+    </div>
+  );
+}
 
 export default Dashboard;

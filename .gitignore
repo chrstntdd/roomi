@@ -10,4 +10,4 @@
 /coverage
 /.docz
 /.env
-/.awcache
+/elm-stuff

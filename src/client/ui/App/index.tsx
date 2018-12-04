@@ -9,11 +9,11 @@ function Loading() {
   return <div>Loading...</div>;
 }
 
-const Home = lazy(() => import('@/ui/pages/Home'));
-const Dashboard = lazy(() => import('@/ui/pages/Dashboard'));
-const NotFound = lazy(() => import('@/ui/pages/NotFound'));
-const SignIn = lazy(() => import('@/ui/pages/Auth/SignIn'));
-const SignUp = lazy(() => import('@/ui/pages/Auth/SignUp'));
+const Home = lazy(() => import(/* webpackChunkName: "home" */ '@/ui/pages/Home'));
+const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/ui/pages/Dashboard'));
+const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ '@/ui/pages/NotFound'));
+const SignIn = lazy(() => import(/* webpackChunkName: "sign-in" */ '@/ui/pages/Auth/SignIn'));
+const SignUp = lazy(() => import(/* webpackChunkName: "sign-up" */ '@/ui/pages/Auth/SignUp'));
 
 // const TransitionRouter = props => (
 //   <Location>
