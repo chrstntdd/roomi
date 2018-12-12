@@ -36,7 +36,7 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
   };
 
   handleBlur = async e => {
-    const val = this.props.value.trim();
+    const val = (this.props.value || '').trim();
 
     if (this.props.validator) {
       this.props.validator(val).matchWith({
@@ -94,17 +94,16 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
           {...domProps}
         />
         <label htmlFor={id}>{label}</label>
-        {!isValid &&
-          validationMsg && (
-            <div className="errors">
-              {Array.isArray(validationMsg) ? (
-                // for mobile, only display one error message at a time
-                validationMsg.slice(0, 1).map((msg, i) => <span key={i}>{msg}</span>)
-              ) : (
-                <span>{validationMsg}</span>
-              )}
-            </div>
-          )}
+        {!isValid && validationMsg && (
+          <div className="errors">
+            {Array.isArray(validationMsg) ? (
+              // for mobile, only display one error message at a time
+              validationMsg.slice(0, 1).map((msg, i) => <span key={i}>{msg}</span>)
+            ) : (
+              <span>{validationMsg}</span>
+            )}
+          </div>
+        )}
       </div>
     );
   }

@@ -12,8 +12,8 @@ function Loading() {
 const Home = lazy(() => import(/* webpackChunkName: "home" */ '@/ui/pages/Home'));
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/ui/pages/Dashboard'));
 const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ '@/ui/pages/NotFound'));
-const SignIn = lazy(() => import(/* webpackChunkName: "sign-in" */ '@/ui/pages/Auth/SignIn'));
-const SignUp = lazy(() => import(/* webpackChunkName: "sign-up" */ '@/ui/pages/Auth/SignUp'));
+const SignIn = lazy(() => import(/* webpackChunkName: "sign-in" */ '@/ui/pages/SignIn'));
+const SignUp = lazy(() => import(/* webpackChunkName: "sign-up" */ '@/ui/pages/SignUp'));
 
 // const TransitionRouter = props => (
 //   <Location>
@@ -58,7 +58,7 @@ function Nav() {
 
 function App() {
   return (
-    <Suspense maxDuration={2000} fallback={<Loading />}>
+    <Suspense fallback={<Loading />}>
       <Page>
         <Nav />
         <Router>

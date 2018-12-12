@@ -9,7 +9,7 @@ import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
 
 import { useToggle, useForm } from '@/hooks';
 
-import { notEmpty, validateSignInForm } from '@/ui/pages/Auth/helpers';
+import { notEmpty, validateSignInForm } from '@/ui/pages/helpers';
 
 import '../Auth.scss';
 

@@ -9,12 +9,7 @@ import Input from '@/ui/components/Input';
 
 import { useToggle, useForm } from '@/hooks';
 
-import {
-  validateSignUpForm,
-  isValidEmail,
-  isValidPassword,
-  notEmpty
-} from '@/ui/pages/Auth/helpers';
+import { validateSignUpForm, isValidEmail, isValidPassword, notEmpty } from '@/ui/pages/helpers';
 
 import '../Auth.scss';
 
