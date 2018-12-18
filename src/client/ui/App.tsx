@@ -1,30 +1,33 @@
-import React, { lazy, Suspense } from 'react';
-import { Router, Link } from '@chrstntdd/router';
+import React, { lazy, Suspense } from 'react'
+import { Router, Link, Location } from '@chrstntdd/router'
+import { Transition } from 'react-spring'
 
-import Page from '@/ui/components/Page';
+import Page from '@/ui/components/Page'
 
-import './App.scss';
+import './App.scss'
 
 function Loading() {
-  return <div>Loading...</div>;
+  return <div>Loading...</div>
 }
 
-const Home = lazy(() => import(/* webpackChunkName: "home" */ '@/ui/pages/Home'));
-const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/ui/pages/Dashboard'));
-const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ '@/ui/pages/NotFound'));
-const SignIn = lazy(() => import(/* webpackChunkName: "sign-in" */ '@/ui/pages/SignIn'));
-const SignUp = lazy(() => import(/* webpackChunkName: "sign-up" */ '@/ui/pages/SignUp'));
+const Home = lazy(() => import(/* webpackChunkName: "home" */ '@/ui/pages/Home'))
+const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/ui/pages/Dashboard'))
+const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ '@/ui/pages/NotFound'))
+const SignIn = lazy(() => import(/* webpackChunkName: "sign-in" */ '@/ui/pages/SignIn'))
+const SignUp = lazy(() => import(/* webpackChunkName: "sign-up" */ '@/ui/pages/SignUp'))
 
-// const TransitionRouter = props => (
+// const TransitionRouter = React.memo(props => (
 //   <Location>
 //     {({ location }) => (
 //       <Transition
+//         unique
+//         items={location.pathname}
 //         keys={location.pathname}
 //         from={{ opacity: 0, transform: 'scale3d(0.5,0.5,0.5)' }}
 //         enter={{ opacity: 1, transform: 'scale3d(1,1,1)' }}
 //         leave={{ opacity: 0, transform: 'scale3d(0.5,0.5,0.5)' }}
 //       >
-//         {styles => (
+//         {() => styles => (
 //           <Router location={location} style={styles}>
 //             {props.children}
 //           </Router>
@@ -32,7 +35,7 @@ const SignUp = lazy(() => import(/* webpackChunkName: "sign-up" */ '@/ui/pages/S
 //       </Transition>
 //     )}
 //   </Location>
-// );
+// ));
 
 function Nav() {
   return (
@@ -53,7 +56,7 @@ function Nav() {
         sign-up
       </Link>
     </nav>
-  );
+  )
 }
 
 function App() {
@@ -70,7 +73,7 @@ function App() {
         </Router>
       </Page>
     </Suspense>
-  );
+  )
 }
 
-export default App;
+export default App

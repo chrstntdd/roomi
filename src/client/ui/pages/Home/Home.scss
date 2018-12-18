@@ -1,0 +1,26 @@
+input[type="radio"] {
+  opacity: 0;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option {
+  padding: 1.2rem;
+  margin: 0 0.8rem;
+}
+
+// .option.selected {
+//   outline: 1px solid red;
+// }
+
+.underline {
+  position: absolute;
+  width: 100px;
+  height: 2px;
+  background-color: lightcoral;
+  transition: all ease-in-out 50ms;
+}
