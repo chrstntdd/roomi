@@ -1,23 +1,23 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent } from 'react'
 
-import { AsyncValidator } from '@/state/fetches';
+import { AsyncValidator } from '@/state/fetches'
 
-import { classNames } from '@/util';
+import { classNames } from '@/util'
 
 interface PInput {
-  id: string;
-  label: string;
-  value: string;
-  validator: any;
-  asyncValidator: () => Promise<AsyncValidator>[];
-  validationMsg?: string;
-  isValid?: boolean;
-  onChange?: (e) => void;
+  id: string
+  label: string
+  value: string
+  validator: any
+  asyncValidator: () => Promise<AsyncValidator>[]
+  validationMsg?: string
+  isValid?: boolean
+  onChange?: (e) => void
 }
 
 interface SInput {
-  isValid: boolean;
-  validationMsg?: string[];
+  isValid: boolean
+  validationMsg?: string[]
 }
 
 /**
@@ -27,39 +27,39 @@ interface SInput {
  */
 export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputElement>, SInput> {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   state = {
     isValid: false,
     validationMsg: []
-  };
+  }
 
   handleBlur = async e => {
-    const val = (this.props.value || '').trim();
+    const val = (this.props.value || '').trim()
 
     if (this.props.validator) {
       this.props.validator(val).matchWith({
         Success: _ => this.setState({ isValid: true, validationMsg: [] }),
         Failure: ({ value }) => this.setState({ isValid: false, validationMsg: value })
-      });
+      })
     }
 
     if (this.props.asyncValidator && val && val.length) {
-      const res = await Promise.all(this.props.asyncValidator());
+      const res = await Promise.all(this.props.asyncValidator())
 
       if (res.every(v => v.isValid)) {
-        this.setState({ isValid: true });
+        this.setState({ isValid: true })
       } else {
         this.setState(prevState => ({
           isValid: false,
           validationMsg: prevState.validationMsg
             ? prevState.validationMsg.concat(res[0].msg)
             : [res[0].msg]
-        }));
+        }))
       }
     }
-  };
+  }
 
   render() {
     const {
@@ -72,11 +72,11 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
       validator,
       asyncValidator,
       ...domProps
-    } = this.props;
-    const { isValid, validationMsg } = this.state;
+    } = this.props
+    const { isValid, validationMsg } = this.state
 
-    const hasContent = value !== '';
-    const hasValidationMsgs = validationMsg && validationMsg.length;
+    const hasContent = value !== ''
+    const hasValidationMsgs = validationMsg && validationMsg.length
 
     return (
       <div className="input-group">
@@ -105,8 +105,8 @@ export class Input extends PureComponent<PInput & React.HTMLProps<HTMLInputEleme
           </div>
         )}
       </div>
-    );
+    )
   }
 }
 
-export default Input;
+export default Input

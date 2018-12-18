@@ -1,1 +1,1 @@
-export { default } from './cmd';
+export { default } from './cmd'

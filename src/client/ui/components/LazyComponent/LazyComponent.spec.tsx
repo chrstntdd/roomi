@@ -1,17 +1,17 @@
-import React from 'react';
-import 'jest-dom/extend-expect';
-import { render, cleanup, waitForElement } from 'react-testing-library';
+import React from 'react'
+import 'jest-dom/extend-expect'
+import { render, cleanup, waitForElement } from 'react-testing-library'
 
-import generateLazyComponent from './';
+import generateLazyComponent from './'
 
-afterEach(cleanup);
+afterEach(cleanup)
 
 test('Should render the imported component just like normal', async () => {
-  const MockComponent = generateLazyComponent(() => import('./MockComponent'));
+  const MockComponent = generateLazyComponent(() => import('./MockComponent'))
 
-  const { getByText, container } = render(<MockComponent />);
+  const { getByText, container } = render(<MockComponent />)
 
-  await waitForElement(() => getByText('Mock'), { container });
+  await waitForElement(() => getByText('Mock'), { container })
 
-  expect(getByText('Mock')).toBeInTheDocument();
-});
+  expect(getByText('Mock')).toBeInTheDocument()
+})

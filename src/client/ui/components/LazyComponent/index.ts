@@ -1,1 +1,1 @@
-export { default } from './LazyComponent';
+export { default } from './LazyComponent'

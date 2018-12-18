@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
 interface PLazyComponent {
-  path?: string;
-  default?: boolean;
+  path?: string
+  default?: boolean
 }
 
 /**
@@ -11,19 +11,19 @@ interface PLazyComponent {
  * instance of Component to the static implementation of `load`.
  */
 export const generateLazyComponent = loader => {
-  let Component = null;
+  let Component = null
 
   return class AsyncRouteComponent extends React.Component<PLazyComponent, {}> {
     constructor(props) {
-      super(props);
+      super(props)
     }
 
-    static displayName = 'AsyncComponent';
+    static displayName = 'AsyncComponent'
 
-    state = { Component };
+    state = { Component }
 
     componentDidMount() {
-      AsyncRouteComponent.load().then(this.updateState);
+      AsyncRouteComponent.load().then(this.updateState)
     }
 
     /**
@@ -33,9 +33,9 @@ export const generateLazyComponent = loader => {
     updateState = () => {
       /* istanbul ignore next */
       if (this.state.Component !== Component) {
-        this.setState({ Component });
+        this.setState({ Component })
       }
-    };
+    }
 
     /**
      * @description Static so that `load` can be called against an
@@ -44,18 +44,18 @@ export const generateLazyComponent = loader => {
      */
     static load() {
       return loader().then(ResolvedComponent => {
-        Component = ResolvedComponent.default || ResolvedComponent;
-      });
+        Component = ResolvedComponent.default || ResolvedComponent
+      })
     }
 
     render() {
-      const { Component: ComponentFromState } = this.state;
+      const { Component: ComponentFromState } = this.state
 
-      if (ComponentFromState) return <ComponentFromState {...this.props} />;
+      if (ComponentFromState) return <ComponentFromState {...this.props} />
 
-      return null;
+      return null
     }
-  };
-};
+  }
+}
 
-export default generateLazyComponent;
+export default generateLazyComponent

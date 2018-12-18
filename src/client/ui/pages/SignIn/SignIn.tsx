@@ -1,27 +1,27 @@
-import React from 'react';
-import { Link } from '@chrstntdd/router';
+import React from 'react'
+import { Link } from '@chrstntdd/router'
 
-import { signIn } from '@/state/fetches';
+import { signIn } from '@/state/fetches'
 
-import Input from '@/ui/components/Input';
-import { SubmitButton } from '@/ui/components/SubmitButton';
-import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
+import Input from '@/ui/components/Input'
+import { SubmitButton } from '@/ui/components/SubmitButton'
+import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons'
 
-import { useToggle, useForm } from '@/hooks';
+import { useToggle, useForm } from '@/hooks'
 
-import { notEmpty, validateSignInForm } from '@/ui/pages/helpers';
+import { notEmpty, validateSignInForm } from '@/ui/pages/helpers'
 
-import '../Auth.scss';
+import '../Auth.scss'
 
 export let SignIn = props => {
-  let [on, setToggle] = useToggle(true);
-  let [formState, setFormState] = useForm();
+  let [on, setToggle] = useToggle(true)
+  let [formState, setFormState] = useForm()
 
   let handleSubmit = async ({ username, password }) => {
-    await signIn({ username, password });
+    await signIn({ username, password })
 
-    props.navigate('/dashboard');
-  };
+    props.navigate('/dashboard')
+  }
 
   return (
     <main>
@@ -77,7 +77,7 @@ export let SignIn = props => {
         </form>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default SignIn;
+export default SignIn

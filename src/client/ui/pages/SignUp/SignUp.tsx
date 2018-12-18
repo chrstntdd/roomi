@@ -1,29 +1,29 @@
-import React from 'react';
-import { Link } from '@chrstntdd/router';
+import React from 'react'
+import { Link } from '@chrstntdd/router'
 
-import { isUsernameAvailable, signUp } from '@/state/fetches';
+import { isUsernameAvailable, signUp } from '@/state/fetches'
 
-import { SubmitButton } from '@/ui/components/SubmitButton';
-import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons';
-import Input from '@/ui/components/Input';
+import { SubmitButton } from '@/ui/components/SubmitButton'
+import { HidePasswordIcon, ShowPasswordIcon } from '@/ui/icons'
+import Input from '@/ui/components/Input'
 
-import { useToggle, useForm } from '@/hooks';
+import { useToggle, useForm } from '@/hooks'
 
-import { validateSignUpForm, isValidEmail, isValidPassword, notEmpty } from '@/ui/pages/helpers';
+import { validateSignUpForm, isValidEmail, isValidPassword, notEmpty } from '@/ui/pages/helpers'
 
-import '../Auth.scss';
+import '../Auth.scss'
 
-let emailInputId = 'email';
-let usernameInputId = 'username';
-let passwordInputId = 'password';
+let emailInputId = 'email'
+let usernameInputId = 'username'
+let passwordInputId = 'password'
 
 export let SignUp = () => {
-  let [on, setToggle] = useToggle(true);
-  let [formState, setFormState] = useForm();
+  let [on, setToggle] = useToggle(true)
+  let [formState, setFormState] = useForm()
 
   let handleSubmit = async ({ username, email, password }) => {
-    await signUp({ username, email, password });
-  };
+    await signUp({ username, email, password })
+  }
 
   return (
     <main>
@@ -81,7 +81,7 @@ export let SignUp = () => {
         </form>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp

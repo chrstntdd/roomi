@@ -1,6 +1,6 @@
-import { Success, Failure } from 'folktale/validation';
+import { Success, Failure } from 'folktale/validation'
 
-import { capitalizeFirstChar } from '@/util';
+import { capitalizeFirstChar } from '@/util'
 
 // Eventually these validators can be moved out into their own top-level directory
 
@@ -9,29 +9,27 @@ export const validEmail = (value: string) =>
     value
   )
     ? Success(value)
-    : Failure(['Please enter a valid email']);
+    : Failure(['Please enter a valid email'])
 
 export const notEmpty = field => value =>
-  value && value.trim()
-    ? Success(value)
-    : Failure([`${capitalizeFirstChar(field)} can't be empty`]);
+  value && value.trim() ? Success(value) : Failure([`${capitalizeFirstChar(field)} can't be empty`])
 
 export const minLength = (field: string, min: number, value: string) =>
   value && value.length > min
     ? Success(value)
-    : Failure([`${capitalizeFirstChar(field)} must have at least ${min} characters`]);
+    : Failure([`${capitalizeFirstChar(field)} must have at least ${min} characters`])
 
 export const isValidEmail = emailValue =>
   Success()
     .concat(notEmpty('email')(emailValue))
     .concat(validEmail(emailValue))
-    .map(_ => emailValue);
+    .map(_ => emailValue)
 
 export const isValidPassword = passwordValue =>
   Success()
     .concat(notEmpty('password')(passwordValue))
     .concat(minLength('password', 6, passwordValue))
-    .map(_ => passwordValue);
+    .map(_ => passwordValue)
 
 export const validateSignInForm = formValues =>
   /** Not validating the password since whatever the user
@@ -40,10 +38,10 @@ export const validateSignInForm = formValues =>
   Success()
     .concat(notEmpty('password')(formValues.password))
     .concat(notEmpty('email')(formValues.username))
-    .map(_ => formValues);
+    .map(_ => formValues)
 
 export const validateSignUpForm = formValues =>
   Success()
     .concat(isValidEmail(formValues.email))
     .concat(isValidPassword(formValues.password))
-    .map(_ => formValues);
+    .map(_ => formValues)

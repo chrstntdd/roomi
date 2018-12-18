@@ -1,4 +1,4 @@
-export const noop = () => {};
+export const noop = () => {}
 
 /**
  * @description
@@ -7,40 +7,40 @@ export const noop = () => {};
  * @param arr An array of strings or expressions that evaluate to a string
  */
 export const classNames = (arr: Array<string | null | undefined | boolean | number>): string => {
-  let classes = [];
+  let classes = []
 
   for (let i = 0; i < arr.length; i++) {
-    const arg = arr[i];
-    if (!arg) continue;
+    const arg = arr[i]
+    if (!arg) continue
 
-    if (typeof arg === 'string') classes.push(arg);
+    if (typeof arg === 'string') classes.push(arg)
   }
 
-  return classes.join(' ');
-};
+  return classes.join(' ')
+}
 
 /* STRING FORMATTING */
 export const capitalizeFirstChar = (value: string): string =>
-  value.charAt(0).toUpperCase() + value.slice(1);
+  value.charAt(0).toUpperCase() + value.slice(1)
 
 export async function sha256(input) {
-  const inputBuf = new TextEncoder().encode(input);
+  const inputBuf = new TextEncoder().encode(input)
 
-  const hashBuf = await crypto.subtle.digest('SHA-256', inputBuf);
+  const hashBuf = await crypto.subtle.digest('SHA-256', inputBuf)
 
-  const hashArr = Array.from(new Uint8Array(hashBuf));
+  const hashArr = Array.from(new Uint8Array(hashBuf))
 
-  const hashHex = hashArr.map(h => ('00' + h.toString(16)).slice(-2)).join('');
+  const hashHex = hashArr.map(h => ('00' + h.toString(16)).slice(-2)).join('')
 
-  return hashHex;
+  return hashHex
 }
 
 export function throttle(delay: number, fn: Function) {
-  let lastCall = 0;
+  let lastCall = 0
   return function(...args) {
-    const now = new Date().getTime();
-    if (now - lastCall < delay) return;
-    lastCall = now;
-    return fn(...args);
-  };
+    const now = new Date().getTime()
+    if (now - lastCall < delay) return
+    lastCall = now
+    return fn(...args)
+  }
 }

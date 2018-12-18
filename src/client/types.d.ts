@@ -1,1 +1,1 @@
-type GenericObject = { [key: string]: any };
+type GenericObject = { [key: string]: any }

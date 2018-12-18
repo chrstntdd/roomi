@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 class MockComponent extends React.Component {
   render() {
-    return <div>Mock</div>;
+    return <div>Mock</div>
   }
 }
 
-export default MockComponent;
+export default MockComponent

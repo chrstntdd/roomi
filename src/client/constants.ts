@@ -1,1 +1,1 @@
-export const GRAPHQL_API_ENDPOINT = 'http://localhost:3000/graphql';
+export const GRAPHQL_API_ENDPOINT = 'http://localhost:3000/graphql'
